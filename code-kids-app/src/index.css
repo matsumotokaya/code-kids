@@ -106,10 +106,3 @@ button {
     0 4px 0 rgba(43, 111, 168, 0.9),
     0 8px 16px rgba(0, 0, 0, 0.18);
 }
-
-.scrollbar-none {
-  scrollbar-width: none;
-}
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
-}

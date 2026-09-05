@@ -12,7 +12,9 @@ interface Props {
 
 export function ProgramStrip({ program, slots, activeIndex, disabled, onRemove }: Props) {
   return (
-    <div className="scrollbar-none flex items-center gap-2 overflow-x-auto py-2" role="list" aria-label="ならべた カード">
+    // Wraps instead of scrolling: a hidden horizontal scrollbar made the later
+    // slots invisible, so children read the visible count as the card limit.
+    <div className="flex flex-wrap items-center gap-2 py-2" role="list" aria-label="ならべた カード">
       {Array.from({ length: slots }).map((_, i) => {
         const cmd = program[i];
         if (!cmd) {
