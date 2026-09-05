@@ -3,6 +3,11 @@
 子ども向け（6歳・8歳）のプログラミング学習ブラウザゲーム集。
 カードを並べてキャラクターを動かす、タブレットで遊べる PWA。
 
+**あそぶ → https://code-kids-inky.vercel.app/**
+
+タブレットで上記を開き、共有メニューから「ホーム画面に追加」すると、
+アドレスバーのないフルスクリーンのアプリとして起動する（オフラインでも遊べる）。
+
 ## 構成
 
 | ディレクトリ | 内容 |
@@ -14,5 +19,21 @@
 
 ## デプロイ
 
-Vercel。**Root Directory を `code-kids-app` に設定する**（リポジトリ直下ではない）。
-`main` への push で本番へ自動デプロイされる。
+本番: https://code-kids-inky.vercel.app/ （Vercel、2026-09-05 公開）
+
+`main` への push で自動デプロイされる。Vercel 側の設定は以下。
+**Root Directory がリポジトリ直下ではない**点だけ注意（他はプリセットのまま）。
+
+| 項目 | 値 |
+|---|---|
+| Framework Preset | Vite |
+| Root Directory | `code-kids-app` |
+| Build Command | `npm run build` |
+| Output Directory | `dist` |
+| Node.js Version | 22.x |
+
+環境変数は不要。外部 API を呼ばず、進捗は端末の localStorage にのみ保存する。
+
+キャッシュ制御は [`code-kids-app/vercel.json`](./code-kids-app/vercel.json) にある。
+Service Worker と manifest は毎回再検証、ハッシュ付きの `assets/` は永続キャッシュ。
+これがないと、ホーム画面に追加済みの端末に古いビルドが残り続けて更新が届かない。
