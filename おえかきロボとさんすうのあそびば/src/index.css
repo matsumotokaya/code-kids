@@ -1,0 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&family=JetBrains+Mono:wght@400;700;800&family=Noto+Sans+JP:wght@400;700;950&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Noto Sans JP", "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+body {
+  background-color: #05070a;
+  color: #e2e8f0;
+}
+
+/* Cyber dot matrix texture backdrop helper */
+.cyber-dots-bg {
+  background-image: radial-gradient(rgba(34, 211, 238, 0.08) 1.2px, transparent 1.2px);
+  background-size: 32px 32px;
+}
+

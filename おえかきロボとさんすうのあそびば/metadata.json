@@ -1,0 +1,6 @@
+{
+  "name": "おえかきロボとさんすうのあそびば",
+  "description": "5歳のお子様向けの、数字や簡単な計算を使ってロボットを動かしたり、きれいな図形を描いたりできる直感的なプログラミング学習・知育アプリです。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
