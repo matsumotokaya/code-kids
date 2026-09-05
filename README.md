@@ -25,11 +25,21 @@
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173 （--host 付きなので同一Wi-Fiのタブレットから <MacのIP>:5173 で開ける）
+npm run dev        # http://localhost:4649 （同一Wi-Fiのタブレットからは http://<MacのIP>:4649）
 npm test           # ゲームエンジンと全ステージの検証（BFS で最短手数 = par を確認）
 npm run build      # 型チェック + 本番ビルド → dist/
-npm run preview    # dist/ を配信
+npm run preview    # dist/ を http://localhost:4650 で配信
 ```
+
+### ポート番号について
+
+dev が **4649**、preview が **4650**。`vite.config.ts` に固定してある。
+
+Vite はデフォルトが 5173 で、しかも埋まっていると黙って 5174 → 6173 と番号をずらす。
+その結果このMacでは複数プロジェクトが 5173 を奪い合い、「localhost:5173 を開いたら別のアプリが出る」
+という状態が実際に起きた。そのため独自の番号を決め打ちし、`strictPort: true` で
+「埋まっていたらずらさずエラーで止まる」ようにしている。番号を変えるときは `vite.config.ts` の
+`DEV_PORT` / `PREVIEW_PORT` を直す。
 
 ## ディレクトリ
 

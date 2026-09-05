@@ -5,7 +5,15 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 const yearInSeconds = 60 * 60 * 24 * 365;
 
+// Every Vite project defaults to 5173, so they all collide on one machine.
+// This app pins its own port and uses strictPort so a conflict fails loudly
+// instead of silently drifting to 5174, 6173 and so on.
+const DEV_PORT = 4649;
+const PREVIEW_PORT = 4650;
+
 export default defineConfig({
+  server: { host: true, port: DEV_PORT, strictPort: true },
+  preview: { host: true, port: PREVIEW_PORT, strictPort: true },
   plugins: [
     react(),
     tailwindcss(),
