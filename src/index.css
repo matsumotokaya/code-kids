@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
+
+  --color-ink: #3b2f2f;
+  --color-cream: #fff8e7;
+  --color-sky-top: #bde9ff;
+  --color-sky-bottom: #e9fbf1;
+  --color-play: #3ecf6a;
+  --color-play-dark: #2a9d4f;
+  --color-sun: #ffd84d;
+  --color-sun-dark: #d9a92a;
+
+  --shadow-chunky: 0 8px 0 rgba(0, 0, 0, 0.12), 0 14px 28px rgba(0, 0, 0, 0.12);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--color-sky-top) 0%, var(--color-sky-bottom) 100%);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-weight: 800;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translateX(-30vw);
+  }
+  to {
+    transform: translateX(110vw);
+  }
+}
+
+@keyframes wave {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(7px);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.anim-float {
+  animation: float 1.8s ease-in-out infinite;
+}
+
+.anim-wave {
+  animation: wave 2.6s ease-in-out infinite;
+}
+
+.anim-drift {
+  animation: drift linear infinite;
+}
+
+.anim-pulse-ring {
+  animation: pulse-ring 1.4s ease-out infinite;
+}
+
+.text-outline {
+  text-shadow:
+    0 4px 0 rgba(43, 111, 168, 0.9),
+    0 8px 16px rgba(0, 0, 0, 0.18);
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
