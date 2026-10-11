@@ -1,7 +1,12 @@
 @import "tailwindcss";
 
+/* Tablets with space to spare: iPad / 10-inch Android in either orientation, not 7-inch ones. */
+@custom-variant roomy (@media (min-width: 720px) and (min-height: 700px));
+
 @theme {
   --font-sans: "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
+  /* The store and login mimic a real tablet UI, so they use the device font instead of the rounded game font. */
+  --font-system: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", system-ui, sans-serif;
 
   --color-ink: #3b2f2f;
   --color-cream: #fff8e7;
@@ -38,11 +43,21 @@ body {
   touch-action: manipulation;
 }
 
-button {
-  font: inherit;
-  color: inherit;
-  cursor: pointer;
-  touch-action: manipulation;
+/* The body disables selection for touch play; iOS will not let you type into a field that inherits it. */
+input {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Must stay in the base layer: unlayered rules beat every utility, which silently
+   dropped text-*, font-* and text color classes on all buttons. */
+@layer base {
+  button {
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
 }
 
 @keyframes float {
@@ -83,6 +98,20 @@ button {
     transform: scale(1.5);
     opacity: 0;
   }
+}
+
+@keyframes jiggle {
+  0%,
+  100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+.anim-jiggle {
+  animation: jiggle 0.26s ease-in-out infinite;
 }
 
 .anim-float {

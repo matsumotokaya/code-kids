@@ -5,9 +5,11 @@ interface Props {
   stars: number;
   size?: number;
   animate?: boolean;
+  /** Applied to each star, e.g. to enlarge them at a breakpoint. */
+  className?: string;
 }
 
-export function StarRating({ stars, size = 28, animate = false }: Props) {
+export function StarRating({ stars, size = 28, animate = false, className }: Props) {
   return (
     <div className="flex items-center justify-center gap-1" aria-label={`ほし ${stars}こ`}>
       {[0, 1, 2].map((i) => {
@@ -18,6 +20,7 @@ export function StarRating({ stars, size = 28, animate = false }: Props) {
             viewBox="0 0 100 100"
             width={size}
             height={size}
+            className={className}
             initial={animate && earned ? { scale: 0, rotate: -60 } : false}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: 'spring', stiffness: 380, damping: 14, delay: animate ? 0.35 + i * 0.3 : 0 }}

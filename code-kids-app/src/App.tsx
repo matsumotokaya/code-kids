@@ -1,63 +1,47 @@
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { AppRunner } from './apps/AppRunner';
+import type { AppId } from './apps/catalog';
 import { sfx } from './audio/sfx';
-import { Sky } from './components/Sky';
-import { getLevel } from './game/levels';
-import { MapScreen } from './screens/MapScreen';
-import { PlayScreen } from './screens/PlayScreen';
-import { TitleScreen } from './screens/TitleScreen';
+import { LoginScreen } from './screens/LoginScreen';
+import { StoreScreen } from './screens/StoreScreen';
 import { useProgress } from './store/progress';
+import { useSession } from './store/session';
 
-type Screen = { name: 'title' } | { name: 'map' } | { name: 'play'; levelId: number };
+type View = { name: 'store' } | { name: 'app'; app: AppId };
 
+/** Login → store → an app, mimicking a tablet the children are not otherwise allowed to download apps on. */
 export default function App() {
-  const [screen, setScreen] = useState<Screen>({ name: 'title' });
-  const character = useProgress((s) => s.character);
-  const setCharacter = useProgress((s) => s.setCharacter);
+  const user = useSession((s) => s.user);
   const soundOn = useProgress((s) => s.soundOn);
+  const [view, setView] = useState<View>({ name: 'store' });
 
   useEffect(() => {
     sfx.setEnabled(soundOn);
   }, [soundOn]);
 
-  const level = screen.name === 'play' ? getLevel(screen.levelId) : undefined;
-  const showTitle = screen.name === 'title' || !character || (screen.name === 'play' && !level);
-  const key = showTitle ? 'title' : screen.name === 'play' ? `play-${screen.levelId}` : 'map';
+  useEffect(() => {
+    if (!user) setView({ name: 'store' });
+  }, [user]);
+
+  const backToStore = useCallback(() => setView({ name: 'store' }), []);
+
+  const key = !user ? 'login' : view.name === 'app' ? `app-${view.app}` : 'store';
 
   return (
-    <>
-      <Sky />
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={key}
-          className="h-full"
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -18 }}
-          transition={{ duration: 0.22, ease: 'easeOut' }}
-        >
-          {showTitle && (
-            <TitleScreen
-              onSelect={(id) => {
-                setCharacter(id);
-                sfx.select();
-                setScreen({ name: 'map' });
-              }}
-            />
-          )}
-          {!showTitle && screen.name === 'map' && character && (
-            <MapScreen character={character} onBack={() => setScreen({ name: 'title' })} onPlay={(levelId) => setScreen({ name: 'play', levelId })} />
-          )}
-          {!showTitle && screen.name === 'play' && character && level && (
-            <PlayScreen
-              level={level}
-              character={character}
-              onExit={() => setScreen({ name: 'map' })}
-              onNext={(levelId) => setScreen({ name: 'play', levelId })}
-            />
-          )}
-        </motion.div>
-      </AnimatePresence>
-    </>
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={key}
+        className="h-full"
+        initial={{ opacity: 0, scale: 0.97 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 1.02 }}
+        transition={{ duration: 0.22, ease: 'easeOut' }}
+      >
+        {!user && <LoginScreen />}
+        {user && view.name === 'store' && <StoreScreen user={user} onOpen={(app) => setView({ name: 'app', app })} />}
+        {user && view.name === 'app' && <AppRunner app={view.app} user={user} onQuit={backToStore} />}
+      </motion.div>
+    </AnimatePresence>
   );
 }

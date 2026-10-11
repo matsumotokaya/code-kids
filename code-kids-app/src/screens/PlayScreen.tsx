@@ -14,6 +14,7 @@ import { keyOf, rateStars, simulate } from '../game/engine';
 import { getLevel } from '../game/levels';
 import type { CardKind, Command, Dir, Level, Point, Times } from '../game/types';
 import { useProgress, type CharacterId } from '../store/progress';
+import type { UserId } from '../store/session';
 
 type Phase = 'edit' | 'running' | 'won' | 'failed';
 
@@ -24,13 +25,14 @@ let idCounter = 0;
 const nextId = () => `c${++idCounter}`;
 
 interface Props {
+  user: UserId;
   level: Level;
   character: CharacterId;
   onExit: () => void;
   onNext: (levelId: number) => void;
 }
 
-export function PlayScreen({ level, character, onExit, onNext }: Props) {
+export function PlayScreen({ user, level, character, onExit, onNext }: Props) {
   const recordResult = useProgress((s) => s.recordResult);
 
   const [program, setProgram] = useState<Command[]>([]);
@@ -182,7 +184,7 @@ export function PlayScreen({ level, character, onExit, onNext }: Props) {
     if (trace.outcome === 'win') {
       const stars = rateStars(level.par, program.length);
       setEarned(stars);
-      recordResult(character, level.id, stars, program.length);
+      recordResult(user, character, level.id, stars, program.length);
       setPhase('won');
     } else {
       setPhase('failed');
@@ -190,7 +192,11 @@ export function PlayScreen({ level, character, onExit, onNext }: Props) {
   };
 
   const cardCols =
-    level.cards.length <= 2 ? 'grid-cols-2' : level.cards.length <= 4 ? 'grid-cols-2 sm:portrait:grid-cols-4' : 'grid-cols-3 sm:portrait:grid-cols-6';
+    level.cards.length <= 2
+      ? 'grid-cols-2'
+      : level.cards.length <= 4
+        ? 'grid-cols-2 min-[560px]:portrait:grid-cols-4'
+        : 'grid-cols-3 min-[560px]:portrait:grid-cols-6';
 
   return (
     <div className="flex h-full flex-col gap-3 p-3" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }}>

@@ -21,7 +21,7 @@ export function ProgramStrip({ program, slots, activeIndex, disabled, onRemove }
           return (
             <div
               key={`empty-${i}`}
-              className="flex size-16 shrink-0 items-center justify-center rounded-2xl border-[3px] border-dashed border-ink/20 bg-white/40 text-lg font-black text-ink/35"
+              className="flex size-14 shrink-0 items-center justify-center rounded-2xl border-[3px] sm:size-16 border-dashed border-ink/20 bg-white/40 text-lg font-black text-ink/35"
             >
               {i + 1}
             </div>
@@ -41,7 +41,7 @@ export function ProgramStrip({ program, slots, activeIndex, disabled, onRemove }
               disabled={disabled}
               onClick={() => onRemove(cmd.id)}
               aria-label={`${i + 1}ばんめ ${meta.label}${cmd.times > 1 ? ` ${cmd.times}かい` : ''}。タップで けす`}
-              className={`relative flex size-16 shrink-0 items-center justify-center rounded-2xl border-b-[5px] shadow-md ${isActive ? 'ring-4 ring-white' : ''}`}
+              className={`relative flex size-14 shrink-0 items-center justify-center rounded-2xl border-b-[5px] sm:size-16 shadow-md ${isActive ? 'ring-4 ring-white' : ''}`}
               style={{ backgroundColor: meta.bg, borderColor: meta.border }}
             >
               <ArrowIcon dir={cmd.dir} className="size-9" />
