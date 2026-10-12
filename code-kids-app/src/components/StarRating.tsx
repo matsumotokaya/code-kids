@@ -32,3 +32,18 @@ export function StarRating({ stars, size = 28, animate = false, className }: Pro
     </div>
   );
 }
+
+/** "★ 12 / 36" counter shown in each game's map header. */
+export function StarTotal({ earned, total }: { earned: number; total: number }) {
+  return (
+    <div className="ml-auto flex items-center gap-1 text-xl">
+      <svg viewBox="0 0 100 100" className="size-7" aria-hidden>
+        <path d={STAR_PATH} fill="#ffd84d" stroke="#d9a92a" strokeWidth={6} strokeLinejoin="round" />
+      </svg>
+      <span>
+        {earned}
+        <span className="text-sm text-ink/60"> / {total}</span>
+      </span>
+    </div>
+  );
+}

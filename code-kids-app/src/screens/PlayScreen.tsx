@@ -1,15 +1,14 @@
-import { ChevronRight, Home, Lightbulb, Play, RotateCcw, Trash2 } from 'lucide-react';
+import { Home, Lightbulb, Play, RotateCcw, Trash2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { sfx } from '../audio/sfx';
 import { Board } from '../components/Board';
 import { CharacterIcon, type Mood } from '../components/Character';
-import { CommandCard } from '../components/CommandCard';
-import { Confetti } from '../components/Confetti';
+import { arrowLook, CommandCard } from '../components/CommandCard';
 import { ProgramStrip } from '../components/ProgramStrip';
-import { StarRating } from '../components/StarRating';
 import { BigButton, IconButton } from '../components/ui/BigButton';
 import { SoundToggle } from '../components/ui/SoundToggle';
+import { WinDialog } from '../components/WinDialog';
 import { keyOf, rateStars, simulate } from '../game/engine';
 import { getLevel } from '../game/levels';
 import type { CardKind, Command, Dir, Level, Point, Times } from '../game/types';
@@ -262,7 +261,7 @@ export function PlayScreen({ user, level, character, onExit, onNext }: Props) {
         </section>
 
         <aside className="flex flex-col gap-3 rounded-3xl bg-white/70 p-3 shadow-chunky backdrop-blur landscape:w-[min(380px,40%)] landscape:shrink-0 landscape:overflow-y-auto">
-          <ProgramStrip program={program} slots={level.slots} activeIndex={activeIndex} disabled={!editing} onRemove={removeCard} />
+          <ProgramStrip program={program} slots={level.slots} activeIndex={activeIndex} disabled={!editing} onRemove={removeCard} look={arrowLook} />
           <div className={`grid gap-3 ${cardCols}`}>
             {level.cards.map((kind) => (
               <CommandCard key={kind} kind={kind} disabled={!editing} onClick={() => addCard(kind)} />
@@ -306,71 +305,17 @@ export function PlayScreen({ user, level, character, onExit, onNext }: Props) {
 
       <AnimatePresence>
         {phase === 'won' && (
-          <>
-            <Confetti />
-            <motion.div
-              className="fixed inset-0 z-50 flex items-center justify-center bg-ink/30 p-4"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <motion.div
-                className="w-full max-w-md rounded-[2rem] bg-cream p-6 text-center shadow-chunky"
-                initial={{ scale: 0.6, y: 60 }}
-                animate={{ scale: 1, y: 0 }}
-                transition={{ type: 'spring', stiffness: 280, damping: 20 }}
-              >
-                <div className="anim-float">
-                  <CharacterIcon id={character} mood="yay" className="mx-auto size-32" />
-                </div>
-                <h2 className="text-4xl">できた！</h2>
-                <div className="mt-2">
-                  <StarRating stars={earned} size={60} animate />
-                </div>
-                <p className="mt-2 text-base text-ink/70">
-                  カード {program.length}まいで クリア！{earned < 3 && ` ${level.par}まいで できると ほし3つ`}
-                </p>
-                <div className="mt-5 flex flex-col gap-3">
-                  {nextLevel ? (
-                    <BigButton
-                      className="text-2xl"
-                      onClick={() => {
-                        sfx.select();
-                        onNext(nextLevel.id);
-                      }}
-                    >
-                      つぎの ステージへ
-                      <ChevronRight className="size-7" />
-                    </BigButton>
-                  ) : (
-                    <p className="rounded-2xl bg-sun/40 px-4 py-3 text-xl">ぜんぶ クリア！ すごい！</p>
-                  )}
-                  <div className="flex gap-3">
-                    <BigButton
-                      tone="white"
-                      className="flex-1 text-lg"
-                      onClick={() => {
-                        resetBoard();
-                        sfx.tap();
-                      }}
-                    >
-                      もういっかい
-                    </BigButton>
-                    <BigButton
-                      tone="yellow"
-                      className="flex-1 text-lg"
-                      onClick={() => {
-                        sfx.tap();
-                        onExit();
-                      }}
-                    >
-                      マップ
-                    </BigButton>
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          </>
+          <WinDialog
+            key="win"
+            hero={<CharacterIcon id={character} mood="yay" className="mx-auto size-32" />}
+            earned={earned}
+            used={program.length}
+            par={level.par}
+            hasNext={!!nextLevel}
+            onNext={() => nextLevel && onNext(nextLevel.id)}
+            onRetry={resetBoard}
+            onMap={onExit}
+          />
         )}
       </AnimatePresence>
     </div>

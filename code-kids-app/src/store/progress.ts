@@ -56,10 +56,7 @@ export const useProgress = create<ProgressState>()(
         set((s) => {
           const progress = s.users[user] ?? emptyUser();
           const profile = progress.profiles[character] ?? {};
-          const prev = profile[levelId];
-          const next: LevelResult = prev
-            ? { stars: Math.max(prev.stars, stars), bestSlots: Math.min(prev.bestSlots, slots) }
-            : { stars, bestSlots: slots };
+          const next = mergeResult(profile[levelId], stars, slots);
           return {
             users: {
               ...s.users,
@@ -75,6 +72,11 @@ export const useProgress = create<ProgressState>()(
     },
   ),
 );
+
+/** Keeps the best stars and the fewest cards ever achieved on a level. */
+export function mergeResult(prev: LevelResult | undefined, stars: number, slots: number): LevelResult {
+  return prev ? { stars: Math.max(prev.stars, stars), bestSlots: Math.min(prev.bestSlots, slots) } : { stars, bestSlots: slots };
+}
 
 export function totalStars(profile: Profile): number {
   return Object.values(profile).reduce((sum, r) => sum + r.stars, 0);
