@@ -26,10 +26,10 @@ export const APPS: AppInfo[] = [
   {
     id: 'pittari-jump',
     name: 'ピッタリジャンプ',
-    subtitle: 'たしざんで ぴったり ジャンプ',
+    subtitle: 'けいさんで ぴったり ジャンプ',
     category: 'さんすう',
     sizeMb: 12,
-    status: 'soon',
+    status: 'ready',
     splash: 'linear-gradient(180deg, #7be495 0%, #2fb36a 100%)',
   },
   {

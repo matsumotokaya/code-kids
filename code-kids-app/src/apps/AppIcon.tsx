@@ -1,6 +1,7 @@
 import { useId } from 'react';
 import { CharacterArt } from '../components/Character';
 import { STAR_PATH } from '../components/tiles';
+import { FrogArt } from './pittari-jump/Frog';
 import type { AppId } from './catalog';
 
 interface Props {
@@ -64,15 +65,9 @@ function PittariJumpArt({ uid }: { uid: string }) {
       <g transform="translate(55 44) scale(0.36)">
         <path d={STAR_PATH} fill="#ffd84d" stroke="#d9a92a" strokeWidth={8} strokeLinejoin="round" />
       </g>
-      {/* Frog */}
-      <ellipse cx={28} cy={69} rx={13} ry={10} fill="#c4f27a" stroke="#2a7a40" strokeWidth={3} />
-      {[21, 35].map((x) => (
-        <g key={x}>
-          <circle cx={x} cy={58} r={5.5} fill="#ffffff" stroke="#2a7a40" strokeWidth={2.5} />
-          <circle cx={x + 0.8} cy={58.5} r={2.3} fill="#1f2a2a" />
-        </g>
-      ))}
-      <path d="M 22 70 Q 28 75 34 70" fill="none" stroke="#2a7a40" strokeWidth={2.5} strokeLinecap="round" />
+      <g transform="translate(8 42) scale(0.4)">
+        <FrogArt />
+      </g>
     </>
   );
 }

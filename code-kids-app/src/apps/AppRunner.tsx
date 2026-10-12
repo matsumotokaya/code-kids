@@ -4,6 +4,7 @@ import type { UserId } from '../store/session';
 import { AppIcon } from './AppIcon';
 import { appInfo, type AppId } from './catalog';
 import { HoshiatsumeApp } from './hoshiatsume/HoshiatsumeApp';
+import { PittariJumpApp } from './pittari-jump/PittariJumpApp';
 
 export interface AppProps {
   user: UserId;
@@ -13,6 +14,7 @@ export interface AppProps {
 /** Playable apps. A catalog entry without a component here can only be listed as "soon". */
 const COMPONENTS: Partial<Record<AppId, ComponentType<AppProps>>> = {
   hoshiatsume: HoshiatsumeApp,
+  'pittari-jump': PittariJumpApp,
 };
 
 const SPLASH_MS = 900;
