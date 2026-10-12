@@ -4,6 +4,7 @@ import type { UserId } from '../store/session';
 import { AppIcon } from './AppIcon';
 import { appInfo, type AppId } from './catalog';
 import { HoshiatsumeApp } from './hoshiatsume/HoshiatsumeApp';
+import { MahouArtApp } from './mahou-art/MahouArtApp';
 import { PittariJumpApp } from './pittari-jump/PittariJumpApp';
 
 export interface AppProps {
@@ -15,6 +16,7 @@ export interface AppProps {
 const COMPONENTS: Partial<Record<AppId, ComponentType<AppProps>>> = {
   hoshiatsume: HoshiatsumeApp,
   'pittari-jump': PittariJumpApp,
+  'mahou-art': MahouArtApp,
 };
 
 const SPLASH_MS = 900;

@@ -86,6 +86,14 @@ function noise(dur: number, vol: number, fromHz: number, toHz: number): void {
   }
 }
 
+/** G major pentatonic over two octaves: no two notes clash, so free drawing always sounds musical. */
+const CHIME_SCALE = [392, 440, 523.25, 587.33, 659.25, 783.99, 880, 1046.5, 1174.66, 1318.51];
+
+function chimeFreq(step: number): number {
+  const i = Math.max(0, Math.floor(step));
+  return CHIME_SCALE[i % CHIME_SCALE.length] * 2 ** Math.floor(i / CHIME_SCALE.length);
+}
+
 export const sfx = {
   setEnabled(value: boolean): void {
     enabled = value;
@@ -124,5 +132,18 @@ export const sfx = {
   },
   unlock(): void {
     [392, 523, 659].forEach((f, i) => tone({ freq: f, dur: 0.2, type: 'sine', vol: 0.07, at: i * 0.08 }));
+  },
+  /** A soft glassy note from the pentatonic scale; step 0 is the lowest. */
+  chime(step: number): void {
+    const f = chimeFreq(step);
+    tone({ freq: f, dur: 0.55, type: 'sine', vol: 0.05 });
+    tone({ freq: f * 2, dur: 0.25, type: 'sine', vol: 0.012 });
+  },
+  /** One rising note per copy, so the chosen number can be heard as well as seen. */
+  bloom(count: number): void {
+    for (let i = 0; i < count; i++) tone({ freq: chimeFreq(i), dur: 0.32, type: 'sine', vol: 0.05, at: i * 0.05 });
+  },
+  sweep(): void {
+    noise(0.45, 0.06, 3200, 250);
   },
 };

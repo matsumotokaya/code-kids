@@ -72,32 +72,35 @@ function PittariJumpArt({ uid }: { uid: string }) {
   );
 }
 
-const ART_COLORS = ['#ffe66d', '#7cf5ff', '#ffffff', '#ffb3e8'];
+const PETAL = 'M 50 50 C 59 41 61 27 50 15 C 39 27 41 41 50 50';
+const LEAF = 'M 50 50 Q 63 46 70 33 Q 57 36 50 50';
 
-/** The times-table circle the game draws: point i joins point (i × k) mod n. */
+/** A small kaleidoscope: glowing petals repeated around the centre, like the game draws. */
 function MahouArtArt({ uid }: { uid: string }) {
-  const n = 40;
-  const k = 2;
-  const r = 34;
-  const pt = (i: number) => {
-    const t = (i * 2 * Math.PI) / n - Math.PI / 2;
-    return { x: 50 + r * Math.cos(t), y: 50 + r * Math.sin(t) };
-  };
+  const copies = 6;
   return (
     <>
       <defs>
-        <linearGradient id={`${uid}-bg`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#6d4bd8" />
-          <stop offset="1" stopColor="#e14fad" />
-        </linearGradient>
+        <radialGradient id={`${uid}-bg`} cx="50%" cy="45%" r="70%">
+          <stop offset="0" stopColor="#3a3590" />
+          <stop offset="0.6" stopColor="#17184d" />
+          <stop offset="1" stopColor="#0a0b24" />
+        </radialGradient>
       </defs>
       <rect width={100} height={100} fill={`url(#${uid}-bg)`} />
-      <circle cx={50} cy={50} r={r} fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth={1.5} />
-      {Array.from({ length: n }, (_, i) => {
-        const a = pt(i);
-        const b = pt((i * k) % n);
-        return <line key={i} x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke={ART_COLORS[i % ART_COLORS.length]} strokeWidth={1.3} strokeOpacity={0.9} />;
+      {Array.from({ length: copies }, (_, k) => {
+        const hue = (k * 360) / copies;
+        return (
+          <g key={k} transform={`rotate(${(360 * k) / copies} 50 50)`} fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <path d={PETAL} stroke={`hsl(${hue}, 100%, 62%)`} strokeWidth={6} strokeOpacity={0.25} />
+            <path d={PETAL} stroke={`hsl(${hue}, 100%, 72%)`} strokeWidth={2} />
+            <path d={LEAF} stroke={`hsl(${hue + 40}, 100%, 72%)`} strokeWidth={1.6} />
+            <path d={LEAF} stroke={`hsl(${hue + 40}, 100%, 72%)`} strokeWidth={1.6} transform="translate(100 0) scale(-1 1)" />
+            <circle cx={50} cy={10} r={1.8} fill="#ffffff" />
+          </g>
+        );
       })}
+      <circle cx={50} cy={50} r={3} fill="#ffffff" />
     </>
   );
 }

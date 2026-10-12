@@ -35,11 +35,11 @@ export const APPS: AppInfo[] = [
   {
     id: 'mahou-art',
     name: 'まほうのアート',
-    subtitle: 'かけざんで もようを かこう',
+    subtitle: 'なぞると もようが ふえる',
     category: 'アート',
     sizeMb: 9,
-    status: 'soon',
-    splash: 'linear-gradient(160deg, #6d4bd8 0%, #e14fad 100%)',
+    status: 'ready',
+    splash: 'radial-gradient(ellipse at 50% 0%, #3a2f86 0%, #1b1a4d 45%, #0b0b26 100%)',
   },
 ];
 
