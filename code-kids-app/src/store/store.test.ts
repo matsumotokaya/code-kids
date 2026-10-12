@@ -7,6 +7,8 @@ describe('userForPassword', () => {
     expect(userForPassword('SEIGEN')).toBe('seigen');
     expect(userForPassword('Seigen')).toBe('seigen');
     expect(userForPassword(' amane ')).toBe('amane');
+    expect(userForPassword('MIKU')).toBe('miku');
+    expect(userForPassword('kaya')).toBe('kaya');
   });
 
   it('rejects anything else', () => {
@@ -31,6 +33,7 @@ describe('migrateProgress', () => {
       expect(v2.users[user].profiles.neko[1]).toEqual({ stars: 1, bestSlots: 4 });
     }
     expect(v2.users.seigen.profiles).not.toBe(v2.users.amane.profiles);
+    expect(v2.users.miku).toEqual({ character: null, profiles: { robo: {}, neko: {}, usagi: {} } });
   });
 
   it('starts empty when nothing was saved', () => {

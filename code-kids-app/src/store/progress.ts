@@ -32,7 +32,7 @@ const emptyUser = (): UserProgress => ({ character: null, profiles: emptyProfile
 
 /**
  * v1 (before login existed) kept one set of character profiles per device.
- * Both children inherit it, so nobody loses the stars they already earned.
+ * Both children who played it then inherit it, so nobody loses the stars they already earned.
  */
 export function migrateProgress(persisted: unknown, version: number): PersistedProgress {
   if (version >= 2) return persisted as PersistedProgress;
@@ -41,14 +41,14 @@ export function migrateProgress(persisted: unknown, version: number): PersistedP
     character: old.character ?? null,
     profiles: { ...emptyProfiles(), ...(JSON.parse(JSON.stringify(old.profiles ?? {})) as Partial<Record<CharacterId, Profile>>) },
   });
-  return { soundOn: old.soundOn ?? true, users: { seigen: inherit(), amane: inherit() } };
+  return { soundOn: old.soundOn ?? true, users: { seigen: inherit(), amane: inherit(), miku: emptyUser(), kaya: emptyUser() } };
 }
 
 export const useProgress = create<ProgressState>()(
   persist(
     (set) => ({
       soundOn: true,
-      users: { seigen: emptyUser(), amane: emptyUser() },
+      users: { seigen: emptyUser(), amane: emptyUser(), miku: emptyUser(), kaya: emptyUser() },
       setCharacter: (user, id) =>
         set((s) => ({ users: { ...s.users, [user]: { ...(s.users[user] ?? emptyUser()), character: id } } })),
       toggleSound: () => set((s) => ({ soundOn: !s.soundOn })),

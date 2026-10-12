@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { AppId } from '../apps/catalog';
 
-export type UserId = 'seigen' | 'amane';
+export type UserId = 'seigen' | 'amane' | 'miku' | 'kaya';
 
 export interface UserMeta {
   id: UserId;
@@ -18,6 +18,8 @@ export interface UserMeta {
 export const USERS: UserMeta[] = [
   { id: 'seigen', name: 'SEIGEN', password: 'SEIGEN', color: '#3b82f6' },
   { id: 'amane', name: 'AMANE', password: 'AMANE', color: '#f97316' },
+  { id: 'miku', name: 'MIKU', password: 'MIKU', color: '#14b8a6' },
+  { id: 'kaya', name: 'KAYA', password: 'KAYA', color: '#8b5cf6' },
 ];
 
 export function userMeta(id: UserId): UserMeta {
@@ -67,7 +69,7 @@ export const useSession = create<SessionState>()(
   persist(
     (set, get) => ({
       user: null,
-      installed: { seigen: [], amane: [] },
+      installed: { seigen: [], amane: [], miku: [], kaya: [] },
       downloads: {},
       login: (user) => set({ user }),
       logout: () => {
