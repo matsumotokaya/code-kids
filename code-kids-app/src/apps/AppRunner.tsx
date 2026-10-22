@@ -8,6 +8,7 @@ import { MahouArtApp } from './mahou-art/MahouArtApp';
 import { MizuNoMichiApp } from './mizu-no-michi/MizuNoMichiApp';
 import { OkashiWakeApp } from './okashi-wake/OkashiWakeApp';
 import { PittariJumpApp } from './pittari-jump/PittariJumpApp';
+import { RhythmMachineApp } from './rhythm-machine/RhythmMachineApp';
 import { ShikitsumeGardenApp } from './shikitsume-garden/ShikitsumeGardenApp';
 import { ShiwakeKoujouApp } from './shiwake-koujou/ShiwakeKoujouApp';
 
@@ -25,6 +26,7 @@ const COMPONENTS: Partial<Record<AppId, ComponentType<AppProps>>> = {
   'shiwake-koujou': ShiwakeKoujouApp,
   'okashi-wake': OkashiWakeApp,
   'shikitsume-garden': ShikitsumeGardenApp,
+  'rhythm-machine': RhythmMachineApp,
 };
 
 const SPLASH_MS = 900;

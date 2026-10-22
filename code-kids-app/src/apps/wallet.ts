@@ -4,6 +4,7 @@ import { useSession, type UserId } from '../store/session';
 import { useMizuProgress } from './mizu-no-michi/progress';
 import { useOkashiProgress } from './okashi-wake/progress';
 import { useJumpProgress } from './pittari-jump/progress';
+import { useRhythmProgress } from './rhythm-machine/progress';
 import { useShikitsumeProgress } from './shikitsume-garden/progress';
 import { useShiwakeProgress } from './shiwake-koujou/progress';
 
@@ -22,7 +23,8 @@ export function useEarnedCoins(user: UserId): number {
   const shiwakeKoujou = useShiwakeProgress((s) => profileCoins(s.users[user]));
   const okashiWake = useOkashiProgress((s) => profileCoins(s.users[user]));
   const shikitsumeGarden = useShikitsumeProgress((s) => profileCoins(s.users[user]));
-  return hoshiatsume + pittariJump + mizuNoMichi + shiwakeKoujou + okashiWake + shikitsumeGarden;
+  const rhythmMachine = useRhythmProgress((s) => profileCoins(s.users[user]));
+  return hoshiatsume + pittariJump + mizuNoMichi + shiwakeKoujou + okashiWake + shikitsumeGarden + rhythmMachine;
 }
 
 export function useCoinBalance(user: UserId): number {
