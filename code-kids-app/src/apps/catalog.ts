@@ -1,4 +1,4 @@
-export type AppId = 'hoshiatsume' | 'pittari-jump' | 'mahou-art' | 'mizu-no-michi';
+export type AppId = 'hoshiatsume' | 'pittari-jump' | 'mahou-art' | 'mizu-no-michi' | 'shiwake-koujou' | 'okashi-wake';
 
 export interface AppInfo {
   id: AppId;
@@ -7,8 +7,12 @@ export interface AppInfo {
   category: string;
   /** Shown in the download sheet. The "download" is simulated, so this is for flavor only. */
   sizeMb: number;
-  /** `soon` apps are listed in the store but cannot be downloaded yet. */
-  status: 'ready' | 'soon';
+  /**
+   * `soon` apps are listed in the store but cannot be downloaded yet.
+   * `hidden` apps are finished but not released: they only appear on the local dev server (`npm run dev`).
+   * Release them one at a time after the children clear the previous one (see ROADMAP.md).
+   */
+  status: 'ready' | 'soon' | 'hidden';
   /** Coins needed to buy it in the store. 0 means free. Earned by clearing stages (see store/coins.ts). */
   price: number;
   /** Background of the launch splash. */
@@ -56,7 +60,30 @@ export const APPS: AppInfo[] = [
     price: 300,
     splash: 'linear-gradient(180deg, #bfe9ff 0%, #e8f8ff 100%)',
   },
+  {
+    id: 'shiwake-koujou',
+    name: 'しわけこうじょう',
+    subtitle: 'いろで わける きかいを つくる',
+    category: 'プログラミング',
+    sizeMb: 17,
+    status: 'hidden',
+    price: 300,
+    splash: 'linear-gradient(180deg, #ffe7b8 0%, #fff6e3 100%)',
+  },
+  {
+    id: 'okashi-wake',
+    name: 'おかしわけマシン',
+    subtitle: 'おかしを なかよく わけよう',
+    category: 'さんすう',
+    sizeMb: 11,
+    status: 'hidden',
+    price: 300,
+    splash: 'linear-gradient(180deg, #ffd6e7 0%, #fff0f6 100%)',
+  },
 ];
+
+/** Apps shown in the store. Unreleased apps are visible only while developing. */
+export const STORE_APPS: AppInfo[] = APPS.filter((a) => a.status !== 'hidden' || import.meta.env.DEV);
 
 export function appInfo(id: AppId): AppInfo {
   return APPS.find((a) => a.id === id) ?? APPS[0];

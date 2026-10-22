@@ -20,6 +20,8 @@ export function AppIcon({ id, className = '' }: Props) {
         {id === 'pittari-jump' && <PittariJumpArt uid={uid} />}
         {id === 'mahou-art' && <MahouArtArt uid={uid} />}
         {id === 'mizu-no-michi' && <MizuNoMichiArt uid={uid} />}
+        {id === 'shiwake-koujou' && <ShiwakeKoujouArt uid={uid} />}
+        {id === 'okashi-wake' && <OkashiWakeArt uid={uid} />}
       </svg>
     </div>
   );
@@ -137,6 +139,64 @@ function MizuNoMichiArt({ uid }: { uid: string }) {
         <circle r={4.5} fill="#ffd84d" />
       </g>
       <path d="M 50 12 Q 56 21 50 25 Q 44 21 50 12 Z" fill="#2f9bff" />
+    </>
+  );
+}
+
+/** A conveyor belt splitting a red apple and a blue ball into their own boxes. */
+function ShiwakeKoujouArt({ uid }: { uid: string }) {
+  return (
+    <>
+      <defs>
+        <linearGradient id={`${uid}-bg`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#ffd98a" />
+          <stop offset="1" stopColor="#fff3d6" />
+        </linearGradient>
+      </defs>
+      <rect width={100} height={100} fill={`url(#${uid}-bg)`} />
+      <rect x={6} y={40} width={58} height={16} rx={8} fill="#4a4a5a" />
+      {[14, 26, 38, 50].map((x) => (
+        <path key={x} d={`M ${x} 44 L ${x + 6} 48 L ${x} 52`} fill="none" stroke="#c9c9d6" strokeWidth={2.5} strokeLinecap="round" />
+      ))}
+      <path d="M 64 48 L 80 30 M 64 48 L 80 66" stroke="#4a4a5a" strokeWidth={10} strokeLinecap="round" />
+      <rect x={74} y={14} width={22} height={20} rx={4} fill="#ff6b6b" stroke="#c94f4f" strokeWidth={2.5} />
+      <rect x={74} y={62} width={22} height={20} rx={4} fill="#5aa9ff" stroke="#2f73c9" strokeWidth={2.5} />
+      <circle cx={22} cy={34} r={9} fill="#ff5a5a" stroke="#c43d3d" strokeWidth={2} />
+      <path d="M 22 25 Q 24 20 28 19" stroke="#4e9a3a" strokeWidth={2.5} fill="none" strokeLinecap="round" />
+      <circle cx={44} cy={34} r={8} fill="#4aa3ef" stroke="#2b6aa3" strokeWidth={2} />
+      <path d="M 38 31 Q 44 26 50 31" stroke="#dff1ff" strokeWidth={2} fill="none" />
+      <rect x={0} y={84} width={100} height={16} fill="#c9a26b" />
+    </>
+  );
+}
+
+/** Six candies shared out onto three plates. */
+function OkashiWakeArt({ uid }: { uid: string }) {
+  const plates = [20, 50, 80];
+  return (
+    <>
+      <defs>
+        <linearGradient id={`${uid}-bg`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#ffb8d2" />
+          <stop offset="1" stopColor="#fff0f6" />
+        </linearGradient>
+      </defs>
+      <rect width={100} height={100} fill={`url(#${uid}-bg)`} />
+      <rect x={30} y={8} width={40} height={24} rx={8} fill="#8a7cf0" stroke="#5b4ec4" strokeWidth={2.5} />
+      <circle cx={42} cy={20} r={3.5} fill="#ffffff" />
+      <circle cx={58} cy={20} r={3.5} fill="#ffffff" />
+      <path d="M 50 32 L 50 44" stroke="#5b4ec4" strokeWidth={4} strokeLinecap="round" />
+      {plates.map((x) => (
+        <g key={x}>
+          <ellipse cx={x} cy={78} rx={15} ry={6} fill="#ffffff" stroke="#d9c7d0" strokeWidth={2} />
+          {[-5, 5].map((dx) => (
+            <g key={dx}>
+              <circle cx={x + dx} cy={71} r={5} fill={x === 50 ? '#ffd84d' : x === 20 ? '#ff7aa8' : '#7ad1ff'} stroke="#ffffff" strokeWidth={1.5} />
+            </g>
+          ))}
+        </g>
+      ))}
+      <circle cx={50} cy={52} r={6} fill="#ffd84d" stroke="#d9a92a" strokeWidth={1.5} />
     </>
   );
 }

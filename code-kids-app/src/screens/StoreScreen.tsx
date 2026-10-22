@@ -1,7 +1,7 @@
 import { AnimatePresence, motion, useIsPresent } from 'motion/react';
 import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react';
 import { AppIcon } from '../apps/AppIcon';
-import { APPS, type AppId, type AppInfo } from '../apps/catalog';
+import { STORE_APPS, type AppId, type AppInfo } from '../apps/catalog';
 import { useCoinBalance } from '../apps/wallet';
 import { sfx } from '../audio/sfx';
 import { CoinIcon } from '../components/Coin';
@@ -117,7 +117,7 @@ export function StoreScreen({ user, onOpen }: Props) {
         </div>
 
         <div className="mt-8 grid grid-cols-[repeat(auto-fill,minmax(170px,1fr))] gap-x-4 gap-y-10 roomy:grid-cols-[repeat(auto-fill,minmax(210px,1fr))] roomy:gap-x-6">
-          {APPS.map((app) => {
+          {STORE_APPS.map((app) => {
             const state = stateOf(app);
             return (
               <AppTile

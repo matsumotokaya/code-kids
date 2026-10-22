@@ -6,7 +6,9 @@ import { appInfo, type AppId } from './catalog';
 import { HoshiatsumeApp } from './hoshiatsume/HoshiatsumeApp';
 import { MahouArtApp } from './mahou-art/MahouArtApp';
 import { MizuNoMichiApp } from './mizu-no-michi/MizuNoMichiApp';
+import { OkashiWakeApp } from './okashi-wake/OkashiWakeApp';
 import { PittariJumpApp } from './pittari-jump/PittariJumpApp';
+import { ShiwakeKoujouApp } from './shiwake-koujou/ShiwakeKoujouApp';
 
 export interface AppProps {
   user: UserId;
@@ -19,6 +21,8 @@ const COMPONENTS: Partial<Record<AppId, ComponentType<AppProps>>> = {
   'pittari-jump': PittariJumpApp,
   'mahou-art': MahouArtApp,
   'mizu-no-michi': MizuNoMichiApp,
+  'shiwake-koujou': ShiwakeKoujouApp,
+  'okashi-wake': OkashiWakeApp,
 };
 
 const SPLASH_MS = 900;

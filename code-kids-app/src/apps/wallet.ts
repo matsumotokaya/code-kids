@@ -2,7 +2,9 @@ import { coinBalance, profileCoins } from '../store/coins';
 import { useProgress } from '../store/progress';
 import { useSession, type UserId } from '../store/session';
 import { useMizuProgress } from './mizu-no-michi/progress';
+import { useOkashiProgress } from './okashi-wake/progress';
 import { useJumpProgress } from './pittari-jump/progress';
+import { useShiwakeProgress } from './shiwake-koujou/progress';
 
 /**
  * Coins earned in every game with stages. Each Hoshiatsume character keeps its own record,
@@ -16,7 +18,9 @@ export function useEarnedCoins(user: UserId): number {
   });
   const pittariJump = useJumpProgress((s) => profileCoins(s.users[user]));
   const mizuNoMichi = useMizuProgress((s) => profileCoins(s.users[user]));
-  return hoshiatsume + pittariJump + mizuNoMichi;
+  const shiwakeKoujou = useShiwakeProgress((s) => profileCoins(s.users[user]));
+  const okashiWake = useOkashiProgress((s) => profileCoins(s.users[user]));
+  return hoshiatsume + pittariJump + mizuNoMichi + shiwakeKoujou + okashiWake;
 }
 
 export function useCoinBalance(user: UserId): number {
