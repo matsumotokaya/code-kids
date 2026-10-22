@@ -8,6 +8,7 @@ import { MahouArtApp } from './mahou-art/MahouArtApp';
 import { MizuNoMichiApp } from './mizu-no-michi/MizuNoMichiApp';
 import { OkashiWakeApp } from './okashi-wake/OkashiWakeApp';
 import { PittariJumpApp } from './pittari-jump/PittariJumpApp';
+import { ShikitsumeGardenApp } from './shikitsume-garden/ShikitsumeGardenApp';
 import { ShiwakeKoujouApp } from './shiwake-koujou/ShiwakeKoujouApp';
 
 export interface AppProps {
@@ -23,6 +24,7 @@ const COMPONENTS: Partial<Record<AppId, ComponentType<AppProps>>> = {
   'mizu-no-michi': MizuNoMichiApp,
   'shiwake-koujou': ShiwakeKoujouApp,
   'okashi-wake': OkashiWakeApp,
+  'shikitsume-garden': ShikitsumeGardenApp,
 };
 
 const SPLASH_MS = 900;

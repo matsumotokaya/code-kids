@@ -1,4 +1,4 @@
-export type AppId = 'hoshiatsume' | 'pittari-jump' | 'mahou-art' | 'mizu-no-michi' | 'shiwake-koujou' | 'okashi-wake';
+export type AppId = 'hoshiatsume' | 'pittari-jump' | 'mahou-art' | 'mizu-no-michi' | 'shiwake-koujou' | 'okashi-wake' | 'shikitsume-garden' | 'rhythm-machine';
 
 export interface AppInfo {
   id: AppId;
@@ -79,6 +79,26 @@ export const APPS: AppInfo[] = [
     status: 'hidden',
     price: 300,
     splash: 'linear-gradient(180deg, #ffd6e7 0%, #fff0f6 100%)',
+  },
+  {
+    id: 'shikitsume-garden',
+    name: 'しきつめガーデン',
+    subtitle: 'かけざんで おはなを うえよう',
+    category: 'さんすう',
+    sizeMb: 13,
+    status: 'hidden',
+    price: 300,
+    splash: 'linear-gradient(180deg, #c8f0a8 0%, #f2fbe8 100%)',
+  },
+  {
+    id: 'rhythm-machine',
+    name: 'リズムマシン',
+    subtitle: 'くりかえしで おんがくを つくる',
+    category: 'おんがく',
+    sizeMb: 14,
+    status: 'hidden',
+    price: 300,
+    splash: 'radial-gradient(ellipse at 50% 0%, #ff8fb3 0%, #7b4fd6 55%, #2d1f66 100%)',
   },
 ];
 

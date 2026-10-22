@@ -22,6 +22,8 @@ export function AppIcon({ id, className = '' }: Props) {
         {id === 'mizu-no-michi' && <MizuNoMichiArt uid={uid} />}
         {id === 'shiwake-koujou' && <ShiwakeKoujouArt uid={uid} />}
         {id === 'okashi-wake' && <OkashiWakeArt uid={uid} />}
+        {id === 'shikitsume-garden' && <ShikitsumeGardenArt uid={uid} />}
+        {id === 'rhythm-machine' && <RhythmMachineArt uid={uid} />}
       </svg>
     </div>
   );
@@ -197,6 +199,70 @@ function OkashiWakeArt({ uid }: { uid: string }) {
         </g>
       ))}
       <circle cx={50} cy={52} r={6} fill="#ffd84d" stroke="#d9a92a" strokeWidth={1.5} />
+    </>
+  );
+}
+
+/** A 3 × 4 bed of flowers, so the icon itself is a multiplication. */
+function ShikitsumeGardenArt({ uid }: { uid: string }) {
+  const colors = ['#ff7aa8', '#ffd84d', '#7ad1ff'];
+  return (
+    <>
+      <defs>
+        <linearGradient id={`${uid}-bg`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#b8ec8f" />
+          <stop offset="1" stopColor="#e9fbd9" />
+        </linearGradient>
+      </defs>
+      <rect width={100} height={100} fill={`url(#${uid}-bg)`} />
+      <rect x={12} y={22} width={76} height={60} rx={8} fill="#a8723f" />
+      <rect x={15} y={25} width={70} height={54} rx={6} fill="#8c5e2a" />
+      {[0, 1, 2].map((r) =>
+        [0, 1, 2, 3].map((c) => {
+          const cx = 25 + c * 17;
+          const cy = 35 + r * 17;
+          return (
+            <g key={`${r}-${c}`}>
+              {[0, 72, 144, 216, 288].map((a) => (
+                <ellipse key={a} cx={cx} cy={cy - 4} rx={2.6} ry={4} fill={colors[r]} transform={`rotate(${a} ${cx} ${cy})`} />
+              ))}
+              <circle cx={cx} cy={cy} r={2.4} fill="#fff4bf" />
+            </g>
+          );
+        }),
+      )}
+    </>
+  );
+}
+
+/** A glowing 4 × 8 step grid with a playhead. */
+function RhythmMachineArt({ uid }: { uid: string }) {
+  const on = new Set(['0-0', '0-4', '1-2', '1-6', '2-0', '2-2', '2-4', '2-6', '3-3', '3-7']);
+  const rowColors = ['#ff7a7a', '#ffd84d', '#7ad1ff', '#b98cff'];
+  return (
+    <>
+      <defs>
+        <radialGradient id={`${uid}-bg`} cx="50%" cy="20%" r="90%">
+          <stop offset="0" stopColor="#7b4fd6" />
+          <stop offset="1" stopColor="#24184f" />
+        </radialGradient>
+      </defs>
+      <rect width={100} height={100} fill={`url(#${uid}-bg)`} />
+      <rect x={42} y={18} width={11} height={66} rx={4} fill="#ffffff" opacity={0.18} />
+      {rowColors.map((color, r) =>
+        Array.from({ length: 8 }, (_, c) => (
+          <rect
+            key={`${r}-${c}`}
+            x={9 + c * 10.5}
+            y={22 + r * 15}
+            width={8}
+            height={11}
+            rx={2.5}
+            fill={on.has(`${r}-${c}`) ? color : '#ffffff'}
+            opacity={on.has(`${r}-${c}`) ? 1 : 0.16}
+          />
+        )),
+      )}
     </>
   );
 }

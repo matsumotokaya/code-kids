@@ -4,6 +4,7 @@ import { useSession, type UserId } from '../store/session';
 import { useMizuProgress } from './mizu-no-michi/progress';
 import { useOkashiProgress } from './okashi-wake/progress';
 import { useJumpProgress } from './pittari-jump/progress';
+import { useShikitsumeProgress } from './shikitsume-garden/progress';
 import { useShiwakeProgress } from './shiwake-koujou/progress';
 
 /**
@@ -20,7 +21,8 @@ export function useEarnedCoins(user: UserId): number {
   const mizuNoMichi = useMizuProgress((s) => profileCoins(s.users[user]));
   const shiwakeKoujou = useShiwakeProgress((s) => profileCoins(s.users[user]));
   const okashiWake = useOkashiProgress((s) => profileCoins(s.users[user]));
-  return hoshiatsume + pittariJump + mizuNoMichi + shiwakeKoujou + okashiWake;
+  const shikitsumeGarden = useShikitsumeProgress((s) => profileCoins(s.users[user]));
+  return hoshiatsume + pittariJump + mizuNoMichi + shiwakeKoujou + okashiWake + shikitsumeGarden;
 }
 
 export function useCoinBalance(user: UserId): number {
