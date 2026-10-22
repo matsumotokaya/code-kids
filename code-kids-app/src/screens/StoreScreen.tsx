@@ -2,12 +2,15 @@ import { AnimatePresence, motion, useIsPresent } from 'motion/react';
 import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react';
 import { AppIcon } from '../apps/AppIcon';
 import { APPS, type AppId, type AppInfo } from '../apps/catalog';
+import { useCoinBalance } from '../apps/wallet';
 import { sfx } from '../audio/sfx';
+import { CoinIcon } from '../components/Coin';
+import { COINS_BY_STARS } from '../store/coins';
 import { userMeta, useSession, type UserId } from '../store/session';
 
-type TileState = 'soon' | 'get' | 'downloading' | 'installed';
+type TileState = 'soon' | 'buy' | 'get' | 'downloading' | 'installed';
 
-type Dialog = { kind: 'get' | 'delete' | 'soon'; app: AppInfo } | { kind: 'account' };
+type Dialog = { kind: 'get' | 'buy' | 'delete' | 'soon'; app: AppInfo } | { kind: 'account' | 'coins' };
 
 const NONE: AppId[] = [];
 const LONG_PRESS_MS = 600;
@@ -28,6 +31,9 @@ export function StoreScreen({ user, onOpen }: Props) {
   const downloads = useSession((s) => s.downloads);
   const startDownload = useSession((s) => s.startDownload);
   const uninstall = useSession((s) => s.uninstall);
+  const purchases = useSession((s) => s.purchases[user]);
+  const buy = useSession((s) => s.buy);
+  const coins = useCoinBalance(user);
   const logout = useSession((s) => s.logout);
   const [dialog, setDialog] = useState<Dialog | null>(null);
   const [justInstalled, setJustInstalled] = useState<AppId | null>(null);
@@ -35,7 +41,8 @@ export function StoreScreen({ user, onOpen }: Props) {
   const stateOf = (app: AppInfo): TileState => {
     if (app.status === 'soon') return 'soon';
     if (downloads[app.id] !== undefined) return 'downloading';
-    return installed.includes(app.id) ? 'installed' : 'get';
+    if (installed.includes(app.id)) return 'installed';
+    return app.price > 0 && purchases?.[app.id] === undefined ? 'buy' : 'get';
   };
 
   const tap = (app: AppInfo) => {
@@ -59,6 +66,13 @@ export function StoreScreen({ user, onOpen }: Props) {
     });
   };
 
+  const purchase = (app: AppInfo) => {
+    if (coins < app.price) return;
+    buy(app.id, app.price);
+    sfx.coin();
+    download(app);
+  };
+
   const close = () => setDialog(null);
 
   return (
@@ -66,26 +80,40 @@ export function StoreScreen({ user, onOpen }: Props) {
       <header className="mx-auto flex max-w-5xl items-end justify-between gap-4 px-6 pb-4 pt-[max(1.5rem,env(safe-area-inset-top))]">
         <div className="min-w-0">
           <p className="text-base font-semibold text-[#8e8e93]">{todayLabel()}</p>
-          <h1 className="text-4xl font-bold tracking-tight">コードキッズ ストア</h1>
+          <h1 className="break-keep text-4xl font-bold tracking-tight">コードキッズ ストア</h1>
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            sfx.tap();
-            setDialog({ kind: 'account' });
-          }}
-          aria-label={`${meta.name}の アカウント`}
-          className="flex shrink-0 items-center gap-2 rounded-full bg-[#f2f2f7] py-1.5 pl-1.5 pr-4 active:bg-[#e5e5ea]"
-        >
-          <Avatar user={user} className="size-10 text-lg" />
-          <span className="text-lg font-semibold">{meta.name}</span>
-        </button>
+        <div className="flex shrink-0 items-center gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              sfx.tap();
+              setDialog({ kind: 'coins' });
+            }}
+            aria-label={`コイン ${coins}こ`}
+            className="flex items-center gap-1.5 rounded-full bg-[#fff6d6] py-1.5 pl-1.5 pr-4 active:bg-[#ffedb0]"
+          >
+            <CoinIcon size={40} />
+            <span className="text-xl font-bold tabular-nums">{coins}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              sfx.tap();
+              setDialog({ kind: 'account' });
+            }}
+            aria-label={`${meta.name}の アカウント`}
+            className="flex items-center gap-2 rounded-full bg-[#f2f2f7] py-1.5 pl-1.5 pr-4 active:bg-[#e5e5ea]"
+          >
+            <Avatar user={user} className="size-10 text-lg" />
+            <span className="text-lg font-semibold">{meta.name}</span>
+          </button>
+        </div>
       </header>
 
       <main className="mx-auto max-w-5xl px-6 pb-12">
         <div className="border-t border-black/10 pt-6">
           <h2 className="text-2xl font-bold">プログラミングの ゲーム</h2>
-          <p className="mt-1 text-lg text-[#6e6e73]">ダウンロードして あそぼう</p>
+          <p className="mt-1 break-keep text-lg text-[#6e6e73]">ステージを クリアすると コインが もらえるよ。コインで あたらしい ゲームが かえるよ</p>
         </div>
 
         <div className="mt-8 grid grid-cols-[repeat(auto-fill,minmax(170px,1fr))] gap-x-4 gap-y-10 roomy:grid-cols-[repeat(auto-fill,minmax(210px,1fr))] roomy:gap-x-6">
@@ -117,7 +145,7 @@ export function StoreScreen({ user, onOpen }: Props) {
 
       <AnimatePresence>
         {dialog && (
-          <Sheet key={dialog.kind === 'account' ? 'account' : `${dialog.kind}-${dialog.app.id}`} onClose={close}>
+          <Sheet key={'app' in dialog ? `${dialog.kind}-${dialog.app.id}` : dialog.kind} onClose={close}>
             {dialog.kind === 'get' && (
               <>
                 <AppIcon id={dialog.app.id} className="mx-auto size-24" />
@@ -127,12 +155,65 @@ export function StoreScreen({ user, onOpen }: Props) {
                 <dl className="mt-4 grid grid-cols-3 rounded-2xl bg-[#f2f2f7] py-3">
                   <Fact label="サイズ" value={`${dialog.app.sizeMb} MB`} />
                   <Fact label="ねんれい" value="6さい〜" />
-                  <Fact label="ねだん" value="むりょう" />
+                  <Fact label="ねだん" value={dialog.app.price > 0 ? 'かいずみ' : 'むりょう'} />
                 </dl>
                 <SheetButtons>
                   <SheetButton onClick={close}>やめる</SheetButton>
                   <SheetButton tone="primary" onClick={() => download(dialog.app)}>
                     ダウンロード
+                  </SheetButton>
+                </SheetButtons>
+              </>
+            )}
+            {dialog.kind === 'buy' && (
+              <>
+                <AppIcon id={dialog.app.id} className="mx-auto size-24" />
+                <h2 className="mt-4 text-2xl font-bold">{dialog.app.name}</h2>
+                <p className="text-base text-[#8e8e93]">{dialog.app.category}</p>
+                {coins >= dialog.app.price ? (
+                  <p className="mt-5 text-xl font-semibold">コインで かいますか？</p>
+                ) : (
+                  <p className="mt-5 text-xl font-semibold">
+                    あと <span className="text-[#ff9500]">{dialog.app.price - coins}コイン</span> たりないよ
+                  </p>
+                )}
+                <dl className="mt-4 grid grid-cols-3 rounded-2xl bg-[#f2f2f7] py-3">
+                  <Fact label="ねだん" value={<CoinAmount n={dialog.app.price} />} />
+                  <Fact label="もっている" value={<CoinAmount n={coins} />} />
+                  <Fact label="かったあと" value={coins >= dialog.app.price ? <CoinAmount n={coins - dialog.app.price} /> : '—'} />
+                </dl>
+                {coins >= dialog.app.price ? (
+                  <SheetButtons>
+                    <SheetButton onClick={close}>やめる</SheetButton>
+                    <SheetButton tone="primary" onClick={() => purchase(dialog.app)}>
+                      かう
+                    </SheetButton>
+                  </SheetButtons>
+                ) : (
+                  <>
+                    <p className="mt-4 text-lg text-[#6e6e73]">ゲームで ステージを クリアして コインを ためよう！</p>
+                    <SheetButtons>
+                      <SheetButton tone="primary" onClick={close}>
+                        OK
+                      </SheetButton>
+                    </SheetButtons>
+                  </>
+                )}
+              </>
+            )}
+            {dialog.kind === 'coins' && (
+              <>
+                <CoinIcon size={96} className="mx-auto" />
+                <h2 className="mt-3 text-3xl font-bold tabular-nums">{coins} コイン</h2>
+                <p className="mt-3 text-lg text-[#6e6e73]">ステージを はじめて クリアすると もらえるよ。ほしが ふえると もっと もらえるよ。</p>
+                <dl className="mt-4 grid grid-cols-3 rounded-2xl bg-[#f2f2f7] py-3">
+                  {([1, 2, 3] as const).map((n) => (
+                    <Fact key={n} label={'★'.repeat(n)} value={<CoinAmount n={COINS_BY_STARS[n]} />} />
+                  ))}
+                </dl>
+                <SheetButtons>
+                  <SheetButton tone="primary" onClick={close}>
+                    OK
                   </SheetButton>
                 </SheetButtons>
               </>
@@ -162,6 +243,11 @@ export function StoreScreen({ user, onOpen }: Props) {
                 <AppIcon id={dialog.app.id} className="mx-auto size-24 opacity-60 grayscale" />
                 <h2 className="mt-4 text-2xl font-bold">{dialog.app.name}</h2>
                 <p className="mt-2 text-lg text-[#6e6e73]">もうすぐ とどくよ！ たのしみに まっててね。</p>
+                {dialog.app.price > 0 && (
+                  <p className="mt-3 text-lg">
+                    <span className="font-semibold">{dialog.app.price}コイン</span> で かえるよ。いまは <span className="font-semibold">{coins}コイン</span>
+                  </p>
+                )}
                 <SheetButtons>
                   <SheetButton tone="primary" onClick={close}>
                     OK
@@ -238,6 +324,11 @@ function AppTile({ app, state, progress, celebrate, onTap, onLongPress }: TilePr
       <div className="mt-1 break-keep text-base leading-snug text-[#8e8e93]">{app.subtitle}</div>
       <div className="mt-3">
         {state === 'get' && <Pill onClick={onTap}>入手</Pill>}
+        {state === 'buy' && (
+          <Pill onClick={onTap}>
+            <CoinAmount n={app.price} />
+          </Pill>
+        )}
         {state === 'installed' && <Pill onClick={onTap}>ひらく</Pill>}
         {state === 'soon' && <span className="inline-block rounded-full bg-[#f2f2f7] px-5 py-2 text-base font-semibold text-[#8e8e93]">もうすぐ</span>}
         {state === 'downloading' && (
@@ -287,7 +378,16 @@ function Pill({ onClick, children }: { onClick: () => void; children: ReactNode 
   );
 }
 
-function Fact({ label, value }: { label: string; value: string }) {
+function CoinAmount({ n }: { n: number }) {
+  return (
+    <span className="inline-flex items-center justify-center gap-1 tabular-nums">
+      <CoinIcon size={22} />
+      {n}
+    </span>
+  );
+}
+
+function Fact({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="border-black/10 [&:not(:first-child)]:border-l">
       <dt className="text-sm text-[#8e8e93]">{label}</dt>

@@ -12,6 +12,8 @@ import { WinDialog } from '../components/WinDialog';
 import { keyOf, rateStars, simulate } from '../game/engine';
 import { getLevel } from '../game/levels';
 import type { CardKind, Command, Dir, Level, Point, Times } from '../game/types';
+import { useCoinBalance } from '../apps/wallet';
+import { newCoins } from '../store/coins';
 import { useProgress, type CharacterId } from '../store/progress';
 import type { UserId } from '../store/session';
 
@@ -33,6 +35,7 @@ interface Props {
 
 export function PlayScreen({ user, level, character, onExit, onNext }: Props) {
   const recordResult = useProgress((s) => s.recordResult);
+  const coinTotal = useCoinBalance(user);
 
   const [program, setProgram] = useState<Command[]>([]);
   const [phase, setPhase] = useState<Phase>('edit');
@@ -48,6 +51,7 @@ export function PlayScreen({ user, level, character, onExit, onNext }: Props) {
   const [ripple, setRipple] = useState<Point | null>(null);
   const [failText, setFailText] = useState<string | null>(null);
   const [earned, setEarned] = useState<1 | 2 | 3>(1);
+  const [coinsGained, setCoinsGained] = useState(0);
   const [showHint, setShowHint] = useState(false);
   const runId = useRef(0);
 
@@ -183,6 +187,8 @@ export function PlayScreen({ user, level, character, onExit, onNext }: Props) {
     if (trace.outcome === 'win') {
       const stars = rateStars(level.par, program.length);
       setEarned(stars);
+      const prevStars = useProgress.getState().users[user]?.profiles[character]?.[level.id]?.stars ?? 0;
+      setCoinsGained(newCoins(prevStars, stars));
       recordResult(user, character, level.id, stars, program.length);
       setPhase('won');
     } else {
@@ -311,6 +317,7 @@ export function PlayScreen({ user, level, character, onExit, onNext }: Props) {
             earned={earned}
             used={program.length}
             par={level.par}
+            coins={{ gained: coinsGained, total: coinTotal }}
             hasNext={!!nextLevel}
             onNext={() => nextLevel && onNext(nextLevel.id)}
             onRetry={resetBoard}

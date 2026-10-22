@@ -35,12 +35,16 @@ export function userForPassword(input: string): UserId | null {
 interface SessionState {
   user: UserId | null;
   installed: Record<UserId, AppId[]>;
+  /** Apps bought with coins and the price paid. Deleting an app keeps the purchase, like a real store. */
+  purchases: Record<UserId, Partial<Record<AppId, number>>>;
   /** Simulated download progress (0-100) for the current user. Not persisted. */
   downloads: Partial<Record<AppId, number>>;
   login: (user: UserId) => void;
   logout: () => void;
   startDownload: (app: AppId, onDone?: () => void) => void;
   uninstall: (app: AppId) => void;
+  /** Records a purchase. The caller checks the balance first (see store/coins.ts). */
+  buy: (app: AppId, price: number) => void;
 }
 
 const TICK_MS = 120;
@@ -70,6 +74,7 @@ export const useSession = create<SessionState>()(
     (set, get) => ({
       user: null,
       installed: { seigen: [], amane: [], miku: [], kaya: [] },
+      purchases: { seigen: {}, amane: {}, miku: {}, kaya: {} },
       downloads: {},
       login: (user) => set({ user }),
       logout: () => {
@@ -108,11 +113,16 @@ export const useSession = create<SessionState>()(
         if (!user) return;
         set((s) => ({ installed: { ...s.installed, [user]: (s.installed[user] ?? []).filter((a) => a !== app) } }));
       },
+      buy: (app, price) => {
+        const { user } = get();
+        if (!user || get().purchases[user]?.[app] !== undefined) return;
+        set((s) => ({ purchases: { ...s.purchases, [user]: { ...s.purchases[user], [app]: price } } }));
+      },
     }),
     {
       name: 'code-kids-session',
       version: 1,
-      partialize: (s) => ({ user: s.user, installed: s.installed }),
+      partialize: (s) => ({ user: s.user, installed: s.installed, purchases: s.purchases }),
     },
   ),
 );

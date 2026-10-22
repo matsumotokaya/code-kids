@@ -9,7 +9,9 @@ import { BigButton, IconButton } from '../../components/ui/BigButton';
 import { SoundToggle } from '../../components/ui/SoundToggle';
 import { WinDialog } from '../../components/WinDialog';
 import { rateStars } from '../../game/engine';
+import { newCoins } from '../../store/coins';
 import type { UserId } from '../../store/session';
+import { useCoinBalance } from '../wallet';
 import { JUMP_CARD_META, JumpCardFace, jumpLook } from './cards';
 import { simulate } from './engine';
 import { FrogIcon, type Facing } from './Frog';
@@ -48,6 +50,7 @@ interface Props {
 
 export function JumpPlayScreen({ user, level, onExit, onNext }: Props) {
   const recordResult = useJumpProgress((s) => s.recordResult);
+  const coinTotal = useCoinBalance(user);
 
   const [program, setProgram] = useState<JumpCommand[]>([]);
   const [phase, setPhase] = useState<Phase>('edit');
@@ -63,6 +66,7 @@ export function JumpPlayScreen({ user, level, onExit, onNext }: Props) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [failText, setFailText] = useState<string | null>(null);
   const [earned, setEarned] = useState<1 | 2 | 3>(1);
+  const [coinsGained, setCoinsGained] = useState(0);
   const [showHint, setShowHint] = useState(false);
   const runId = useRef(0);
   const hopSeq = useRef(0);
@@ -193,6 +197,8 @@ export function JumpPlayScreen({ user, level, onExit, onNext }: Props) {
     if (trace.outcome === 'win') {
       const stars = rateStars(level.par, program.length);
       setEarned(stars);
+      const prevStars = useJumpProgress.getState().users[user]?.[level.id]?.stars ?? 0;
+      setCoinsGained(newCoins(prevStars, stars));
       recordResult(user, level.id, stars, program.length);
       setPhase('won');
     } else {
@@ -329,6 +335,7 @@ export function JumpPlayScreen({ user, level, onExit, onNext }: Props) {
             earned={earned}
             used={program.length}
             par={level.par}
+            coins={{ gained: coinsGained, total: coinTotal }}
             hasNext={!!nextLevel}
             onNext={() => nextLevel && onNext(nextLevel.id)}
             onRetry={resetBoard}

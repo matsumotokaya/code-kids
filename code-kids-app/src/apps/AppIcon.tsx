@@ -19,6 +19,7 @@ export function AppIcon({ id, className = '' }: Props) {
         {id === 'hoshiatsume' && <HoshiatsumeArt uid={uid} />}
         {id === 'pittari-jump' && <PittariJumpArt uid={uid} />}
         {id === 'mahou-art' && <MahouArtArt uid={uid} />}
+        {id === 'mizu-no-michi' && <MizuNoMichiArt uid={uid} />}
       </svg>
     </div>
   );
@@ -101,6 +102,41 @@ function MahouArtArt({ uid }: { uid: string }) {
         );
       })}
       <circle cx={50} cy={50} r={3} fill="#ffffff" />
+    </>
+  );
+}
+
+const PIPE = 'M 4 30 H 34 V 66 H 72 V 84';
+
+/** A tap on the left, a bent pipe carrying water, and a flower waiting at the end. */
+function MizuNoMichiArt({ uid }: { uid: string }) {
+  return (
+    <>
+      <defs>
+        <linearGradient id={`${uid}-bg`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#9fdcff" />
+          <stop offset="1" stopColor="#e6f7ff" />
+        </linearGradient>
+      </defs>
+      <rect width={100} height={100} fill={`url(#${uid}-bg)`} />
+      <rect y={84} width={100} height={16} fill="#6fbf52" />
+      <path d={PIPE} fill="none" stroke="#5f7d8f" strokeWidth={17} strokeLinejoin="round" />
+      <path d={PIPE} fill="none" stroke="#9fb6c4" strokeWidth={13} strokeLinejoin="round" />
+      <path d={PIPE} fill="none" stroke="#2f9bff" strokeWidth={6} strokeLinejoin="round" strokeDasharray="9 5" />
+      {[
+        [34, 30],
+        [34, 66],
+        [72, 66],
+      ].map(([x, y]) => (
+        <rect key={`${x}-${y}`} x={x - 10} y={y - 10} width={20} height={20} rx={4} fill="none" stroke="#5f7d8f" strokeWidth={3} />
+      ))}
+      <g transform="translate(72 74)">
+        {[0, 72, 144, 216, 288].map((a) => (
+          <ellipse key={a} cx={0} cy={-8} rx={5} ry={8} fill="#ff8fb3" transform={`rotate(${a})`} />
+        ))}
+        <circle r={4.5} fill="#ffd84d" />
+      </g>
+      <path d="M 50 12 Q 56 21 50 25 Q 44 21 50 12 Z" fill="#2f9bff" />
     </>
   );
 }

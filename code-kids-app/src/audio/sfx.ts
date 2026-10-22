@@ -130,6 +130,11 @@ export const sfx = {
     const melody = [523, 659, 784, 1046, 784, 1046, 1318];
     melody.forEach((f, i) => tone({ freq: f, dur: 0.26, type: 'triangle', vol: 0.09, at: i * 0.09 }));
   },
+  /** The classic two-note coin pickup. */
+  coin(): void {
+    tone({ freq: 988, dur: 0.09, type: 'square', vol: 0.04 });
+    tone({ freq: 1319, dur: 0.32, type: 'square', vol: 0.04, at: 0.08 });
+  },
   unlock(): void {
     [392, 523, 659].forEach((f, i) => tone({ freq: f, dur: 0.2, type: 'sine', vol: 0.07, at: i * 0.08 }));
   },
