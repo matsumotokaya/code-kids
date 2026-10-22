@@ -11,11 +11,16 @@ interface Props {
   /** Floats above the next level to play, e.g. the player's character. */
   marker: ReactNode;
   onPlay: (levelId: number) => void;
+  /** Overrides the default "previous id is cleared" rule (Hoshiatsume World 2 starts at 101). */
+  unlocked?: (levelId: number) => boolean;
+  /** Number printed on the stage button; defaults to the id. */
+  label?: (levelId: number) => number;
 }
 
 /** Stage-select grid shared by every game: cleared levels turn gold and the next one is unlocked. */
-export function LevelGrid({ levels, results, marker, onPlay }: Props) {
-  const currentId = levels.find((l) => isUnlocked(results, l.id) && !results[l.id])?.id;
+export function LevelGrid({ levels, results, marker, onPlay, unlocked: unlockRule, label = (id) => id }: Props) {
+  const canPlay = (id: number) => (unlockRule ? unlockRule(id) : isUnlocked(results, id));
+  const currentId = levels.find((l) => canPlay(l.id) && !results[l.id])?.id;
 
   return (
     // Gaps leave room for the floating marker so it never covers the label of the row above.
@@ -23,7 +28,7 @@ export function LevelGrid({ levels, results, marker, onPlay }: Props) {
       <div className="mx-auto grid w-full max-w-5xl grid-cols-3 gap-x-4 gap-y-16 px-4 pb-6 pt-14 sm:grid-cols-4 roomy:gap-y-20 roomy:pt-20 landscape:grid-cols-6">
         {levels.map((level, i) => {
           const result = results[level.id];
-          const unlocked = isUnlocked(results, level.id);
+          const unlocked = canPlay(level.id);
           const isCurrent = level.id === currentId;
           return (
             <motion.div
@@ -41,7 +46,7 @@ export function LevelGrid({ levels, results, marker, onPlay }: Props) {
                   sfx.select();
                   onPlay(level.id);
                 }}
-                aria-label={`ステージ ${level.id} ${level.title}${unlocked ? '' : '（まだ あそべない）'}`}
+                aria-label={`ステージ ${label(level.id)} ${level.title}${unlocked ? '' : '（まだ あそべない）'}`}
                 className={`relative flex size-20 items-center justify-center rounded-full border-b-[6px] text-3xl font-black roomy:size-28 roomy:text-4xl shadow-chunky transition-transform duration-100 active:translate-y-1.5 active:border-b-[2px] disabled:pointer-events-none ${
                   !unlocked
                     ? 'border-[#a39c90] bg-[#cfc8bc] text-white/80'
@@ -51,7 +56,7 @@ export function LevelGrid({ levels, results, marker, onPlay }: Props) {
                 }`}
               >
                 {isCurrent && <span className="anim-pulse-ring absolute inset-0 rounded-full border-4 border-white" />}
-                {unlocked ? level.id : <Lock className="size-8 roomy:size-10" />}
+                {unlocked ? label(level.id) : <Lock className="size-8 roomy:size-10" />}
               </button>
               <StarRating stars={result?.stars ?? 0} size={22} className="roomy:size-7" />
               <div className="text-center text-xs leading-tight text-ink/70 roomy:text-base">{level.title}</div>

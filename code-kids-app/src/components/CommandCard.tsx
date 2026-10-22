@@ -15,7 +15,15 @@ export const CARD_META: Record<CardKind, CardMeta> = {
   right: { label: 'みぎ', bg: '#6ee39a', border: '#2fa862', text: '#ffffff' },
   x2: { label: '2かい', bg: '#ff8fb1', border: '#d3567f', text: '#ffffff' },
   x3: { label: '3かい', bg: '#ffd84d', border: '#d9a92a', text: '#3b2f2f' },
+  // World 2 loop cards share one teal family (and the teal bracket in the strip), far from the
+  // pink / yellow 2かい・3かい modifiers so the two kinds of "repeat" never look alike.
+  loop2: { label: 'くりかえし', bg: '#1fb5a5', border: '#11806f', text: '#ffffff' },
+  loop3: { label: 'くりかえし', bg: '#1fb5a5', border: '#11806f', text: '#ffffff' },
+  end: { label: 'おわり', bg: '#1fb5a5', border: '#11806f', text: '#ffffff' },
 };
+
+/** Teal of the loop bracket drawn behind the cards a くりかえし repeats. */
+export const LOOP_BAND = { fill: '#c6f0ea', active: '#8fe3d6', edge: '#1fb5a5' };
 
 /** What a card looks like, independent of which game it belongs to. */
 export interface CardLook {
@@ -49,7 +57,38 @@ export function ArrowIcon({ dir, className = '' }: { dir: Dir; className?: strin
   );
 }
 
+/** くりかえし face: a circular arrow around the number of passes. */
+export function LoopIcon({ count, className = '' }: { count: 2 | 3; className?: string }) {
+  return (
+    <svg viewBox="0 0 40 40" className={className} aria-hidden>
+      <path
+        d="M31.5 14.5 A13 13 0 1 0 33 22"
+        fill="none"
+        stroke="#ffffff"
+        strokeWidth={4.5}
+        strokeLinecap="round"
+      />
+      <path d="M26.5 13 L34.5 15.5 L35 7 Z" fill="#ffffff" stroke="#ffffff" strokeWidth={2} strokeLinejoin="round" />
+      <text x={20} y={27} textAnchor="middle" fontSize={19} fontWeight={900} fill="#ffffff" fontFamily="inherit">
+        {count}
+      </text>
+    </svg>
+  );
+}
+
+/** おわり face: a closing bracket whose top hooks back toward the start of the loop. */
+export function EndIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 40 40" className={className} aria-hidden>
+      <path d="M13 9 H25 V31 H11" fill="none" stroke="#ffffff" strokeWidth={4.5} strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M8 9 L15 4 L15 14 Z" fill="#ffffff" stroke="#ffffff" strokeWidth={2} strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function CardFace({ kind, className = '' }: { kind: CardKind; className?: string }) {
+  if (kind === 'loop2' || kind === 'loop3') return <LoopIcon count={kind === 'loop2' ? 2 : 3} className={className} />;
+  if (kind === 'end') return <EndIcon className={className} />;
   if (kind === 'x2' || kind === 'x3') {
     return (
       <span className={`font-black leading-none ${className}`} style={{ color: CARD_META[kind].text }}>
