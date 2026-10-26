@@ -5,6 +5,7 @@ import { STORE_APPS, type AppId, type AppInfo } from '../apps/catalog';
 import { useCoinBalance } from '../apps/wallet';
 import { sfx } from '../audio/sfx';
 import { CoinIcon } from '../components/Coin';
+import { Avatar } from '../components/ui/AccountBadge';
 import { COINS_BY_STARS } from '../store/coins';
 import { userMeta, useSession, type UserId } from '../store/session';
 
@@ -77,12 +78,13 @@ export function StoreScreen({ user, onOpen }: Props) {
 
   return (
     <div className="font-system h-full overflow-y-auto bg-white font-normal text-[#1c1c1e]">
-      <header className="mx-auto flex max-w-5xl items-end justify-between gap-4 px-6 pb-4 pt-[max(1.5rem,env(safe-area-inset-top))]">
+      <header className="mx-auto flex max-w-5xl flex-col gap-3 px-4 pb-4 pt-[max(1rem,env(safe-area-inset-top))] sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:px-6 sm:pt-[max(1.5rem,env(safe-area-inset-top))]">
         <div className="min-w-0">
           <p className="text-base font-semibold text-[#8e8e93]">{todayLabel()}</p>
-          <h1 className="break-keep text-4xl font-bold tracking-tight">コードキッズ ストア</h1>
+          <h1 className="break-keep text-3xl font-bold tracking-tight sm:text-4xl">コードキッズ ストア</h1>
         </div>
-        <div className="flex shrink-0 items-center gap-3">
+        {/* On phones the buttons take their own row above the title so the title keeps the full width. */}
+        <div className="order-first flex shrink-0 items-center justify-end gap-3 sm:order-none">
           <button
             type="button"
             onClick={() => {
@@ -110,13 +112,13 @@ export function StoreScreen({ user, onOpen }: Props) {
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-6 pb-12">
+      <main className="mx-auto max-w-5xl px-4 pb-12 sm:px-6">
         <div className="border-t border-black/10 pt-6">
           <h2 className="text-2xl font-bold">プログラミングの ゲーム</h2>
           <p className="mt-1 break-keep text-lg text-[#6e6e73]">ステージを クリアすると コインが もらえるよ。コインで あたらしい ゲームが かえるよ</p>
         </div>
 
-        <div className="mt-8 grid grid-cols-[repeat(auto-fill,minmax(170px,1fr))] gap-x-4 gap-y-10 roomy:grid-cols-[repeat(auto-fill,minmax(210px,1fr))] roomy:gap-x-6">
+        <div className="mt-8 grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-[repeat(auto-fill,minmax(170px,1fr))] sm:gap-x-4 sm:gap-y-10 roomy:grid-cols-[repeat(auto-fill,minmax(210px,1fr))] roomy:gap-x-6">
           {STORE_APPS.map((app) => {
             const state = stateOf(app);
             return (
@@ -177,10 +179,9 @@ export function StoreScreen({ user, onOpen }: Props) {
                     あと <span className="text-[#ff9500]">{dialog.app.price - coins}コイン</span> たりないよ
                   </p>
                 )}
-                <dl className="mt-4 grid grid-cols-3 rounded-2xl bg-[#f2f2f7] py-3">
+                <dl className="mt-4 grid grid-cols-2 rounded-2xl bg-[#f2f2f7] py-3">
                   <Fact label="ねだん" value={<CoinAmount n={dialog.app.price} />} />
                   <Fact label="もっている" value={<CoinAmount n={coins} />} />
-                  <Fact label="かったあと" value={coins >= dialog.app.price ? <CoinAmount n={coins - dialog.app.price} /> : '—'} />
                 </dl>
                 {coins >= dialog.app.price ? (
                   <SheetButtons>
@@ -281,15 +282,6 @@ export function StoreScreen({ user, onOpen }: Props) {
   );
 }
 
-function Avatar({ user, className = '' }: { user: UserId; className?: string }) {
-  const meta = userMeta(user);
-  return (
-    <span className={`flex items-center justify-center rounded-full font-bold text-white ${className}`} style={{ backgroundColor: meta.color }} aria-hidden>
-      {meta.name[0]}
-    </span>
-  );
-}
-
 interface TileProps {
   app: AppInfo;
   state: TileState;
@@ -304,7 +296,7 @@ function AppTile({ app, state, progress, celebrate, onTap, onLongPress }: TilePr
   const percent = Math.floor(progress);
 
   return (
-    <div className="flex flex-col items-center text-center">
+    <div className="flex h-full flex-col items-center text-center">
       <motion.button
         type="button"
         {...press.handlers}
@@ -317,12 +309,13 @@ function AppTile({ app, state, progress, celebrate, onTap, onLongPress }: TilePr
         aria-label={app.name}
         className="relative transition-transform duration-150 active:scale-95"
       >
-        <AppIcon id={app.id} className={`size-32 roomy:size-40 ${state === 'soon' ? 'opacity-60 grayscale' : ''}`} />
+        <AppIcon id={app.id} className={`size-28 sm:size-32 roomy:size-40 ${state === 'soon' ? 'opacity-60 grayscale' : ''}`} />
         {state === 'downloading' && <DownloadOverlay percent={percent} />}
       </motion.button>
-      <div className="mt-3 text-xl font-semibold leading-tight">{app.name}</div>
-      <div className="mt-1 break-keep text-base leading-snug text-[#8e8e93]">{app.subtitle}</div>
-      <div className="mt-3">
+      <div className="mt-3 text-lg font-semibold leading-tight sm:text-xl">{app.name}</div>
+      <div className="mt-1 break-keep text-sm leading-snug text-[#8e8e93] sm:text-base">{app.subtitle}</div>
+      {/* Pinned to the bottom so buttons line up across a row even when subtitles wrap differently. */}
+      <div className="mt-auto pt-3">
         {state === 'get' && <Pill onClick={onTap}>入手</Pill>}
         {state === 'buy' && (
           <Pill onClick={onTap}>

@@ -12,7 +12,7 @@ interface OkashiProgressState {
 export const useOkashiProgress = create<OkashiProgressState>()(
   persist(
     (set) => ({
-      users: { seigen: {}, amane: {}, miku: {}, kaya: {} },
+      users: { seigen: {}, amane: {}, miku: {}, kaya: {}, guest: {} },
       recordResult: (user, levelId, stars, tries) =>
         set((s) => {
           const profile = s.users[user] ?? {};

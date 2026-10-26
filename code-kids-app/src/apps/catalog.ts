@@ -8,7 +8,7 @@ export interface AppInfo {
   /** Shown in the download sheet. The "download" is simulated, so this is for flavor only. */
   sizeMb: number;
   /**
-   * `soon` apps are listed in the store but cannot be downloaded yet.
+   * `soon` apps are listed greyed out with 「もうすぐ」 so the children have something to look forward to; they cannot be downloaded yet.
    * `hidden` apps are finished but not released: they only appear on the local dev server (`npm run dev`).
    * Release them one at a time after the children clear the previous one (see ROADMAP.md).
    */
@@ -66,7 +66,7 @@ export const APPS: AppInfo[] = [
     subtitle: 'いろで わける きかいを つくる',
     category: 'プログラミング',
     sizeMb: 17,
-    status: 'hidden',
+    status: 'ready',
     price: 300,
     splash: 'linear-gradient(180deg, #ffe7b8 0%, #fff6e3 100%)',
   },
@@ -76,7 +76,7 @@ export const APPS: AppInfo[] = [
     subtitle: 'おかしを なかよく わけよう',
     category: 'さんすう',
     sizeMb: 11,
-    status: 'hidden',
+    status: 'soon',
     price: 300,
     splash: 'linear-gradient(180deg, #ffd6e7 0%, #fff0f6 100%)',
   },
@@ -86,7 +86,7 @@ export const APPS: AppInfo[] = [
     subtitle: 'かけざんで おはなを うえよう',
     category: 'さんすう',
     sizeMb: 13,
-    status: 'hidden',
+    status: 'soon',
     price: 300,
     splash: 'linear-gradient(180deg, #c8f0a8 0%, #f2fbe8 100%)',
   },
@@ -96,7 +96,7 @@ export const APPS: AppInfo[] = [
     subtitle: 'くりかえしで おんがくを つくる',
     category: 'おんがく',
     sizeMb: 14,
-    status: 'hidden',
+    status: 'soon',
     price: 300,
     splash: 'radial-gradient(ellipse at 50% 0%, #ff8fb3 0%, #7b4fd6 55%, #2d1f66 100%)',
   },

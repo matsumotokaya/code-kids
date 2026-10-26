@@ -2,12 +2,13 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { AppId } from '../apps/catalog';
 
-export type UserId = 'seigen' | 'amane' | 'miku' | 'kaya';
+export type UserId = 'seigen' | 'amane' | 'miku' | 'kaya' | 'guest';
 
 export interface UserMeta {
   id: UserId;
   name: string;
-  password: string;
+  /** No password means the account is entered from its own button, not by typing. */
+  password?: string;
   color: string;
 }
 
@@ -20,6 +21,8 @@ export const USERS: UserMeta[] = [
   { id: 'amane', name: 'AMANE', password: 'AMANE', color: '#f97316' },
   { id: 'miku', name: 'MIKU', password: 'MIKU', color: '#14b8a6' },
   { id: 'kaya', name: 'KAYA', password: 'KAYA', color: '#8b5cf6' },
+  // One shared account for visitors. It keeps its stars and coins like the others, so a guest can still buy games.
+  { id: 'guest', name: 'ゲスト', color: '#8e8e93' },
 ];
 
 export function userMeta(id: UserId): UserMeta {
@@ -73,8 +76,8 @@ export const useSession = create<SessionState>()(
   persist(
     (set, get) => ({
       user: null,
-      installed: { seigen: [], amane: [], miku: [], kaya: [] },
-      purchases: { seigen: {}, amane: {}, miku: {}, kaya: {} },
+      installed: { seigen: [], amane: [], miku: [], kaya: [], guest: [] },
+      purchases: { seigen: {}, amane: {}, miku: {}, kaya: {}, guest: {} },
       downloads: {},
       login: (user) => set({ user }),
       logout: () => {

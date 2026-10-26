@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { sfx } from '../../audio/sfx';
 import { BigButton, IconButton } from '../../components/ui/BigButton';
+import { AccountBadge } from '../../components/ui/AccountBadge';
 import { SoundToggle } from '../../components/ui/SoundToggle';
 import { WinDialog } from '../../components/WinDialog';
 import { newCoins } from '../../store/coins';
@@ -43,6 +44,8 @@ export function MizuPlayScreen({ user, level, onExit, onNext }: Props) {
   const [failText, setFailText] = useState<string | null>(null);
   const [earned, setEarned] = useState<1 | 2 | 3>(1);
   const [coinsGained, setCoinsGained] = useState(0);
+  /** Set when this clear was the first clear of the last stage, i.e. the whole game is done. */
+  const [finale, setFinale] = useState(false);
   const [showHint, setShowHint] = useState(firstVisit);
   const [wiggle, setWiggle] = useState<{ key: string; n: number } | null>(null);
   const [emptyKind, setEmptyKind] = useState<{ kind: PieceKind; n: number } | null>(null);
@@ -150,6 +153,7 @@ export function MizuPlayScreen({ user, level, onExit, onNext }: Props) {
       const prevStars = useMizuProgress.getState().users[user]?.[level.id]?.stars ?? 0;
       setEarned(stars);
       setCoinsGained(newCoins(prevStars, stars));
+      setFinale(!nextLevel && prevStars === 0);
       recordResult(user, level.id, stars, attempt);
       sfx.win();
       setPhase('won');
@@ -164,7 +168,7 @@ export function MizuPlayScreen({ user, level, onExit, onNext }: Props) {
 
   return (
     <div className="flex h-full flex-col gap-3 p-3" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }}>
-      <header className="flex items-center gap-3">
+      <header className="flex items-center gap-2 sm:gap-3">
         <IconButton
           label="マップに もどる"
           onClick={() => {
@@ -189,6 +193,7 @@ export function MizuPlayScreen({ user, level, onExit, onNext }: Props) {
           <Lightbulb className="size-7" />
         </IconButton>
         <SoundToggle />
+        <AccountBadge user={user} />
       </header>
 
       <main className="flex min-h-0 flex-1 flex-col gap-3 landscape:flex-row">
@@ -203,25 +208,28 @@ export function MizuPlayScreen({ user, level, onExit, onNext }: Props) {
             wiggle={wiggle}
             onTap={tapCell}
           />
+        </section>
 
-          <AnimatePresence>
+        <aside className="flex flex-col gap-3 rounded-3xl bg-white/70 p-3 shadow-chunky backdrop-blur landscape:w-[min(380px,40%)] landscape:shrink-0 landscape:overflow-y-auto">
+          {/* The hint lives in the panel, not over the garden, so it never hides the pipes it talks about. */}
+          <AnimatePresence initial={false}>
             {showHint && (
               <motion.button
                 type="button"
                 onClick={() => setShowHint(false)}
-                initial={{ opacity: 0, y: -16, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -16, scale: 0.9 }}
-                className="absolute left-3 right-3 top-2 flex items-center gap-3 rounded-3xl border-4 border-sun bg-cream px-4 py-3 text-left text-base leading-snug shadow-chunky"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="shrink-0 overflow-hidden rounded-2xl border-4 border-sun bg-cream text-left text-base leading-snug"
               >
-                <DropIcon className="size-14 shrink-0" />
-                <span>{level.hint}</span>
+                <span className="flex items-center gap-3 px-3 py-2">
+                  <DropIcon className="size-12 shrink-0" />
+                  <span>{level.hint}</span>
+                </span>
               </motion.button>
             )}
           </AnimatePresence>
-        </section>
 
-        <aside className="flex flex-col gap-3 rounded-3xl bg-white/70 p-3 shadow-chunky backdrop-blur landscape:w-[min(380px,40%)] landscape:shrink-0 landscape:overflow-y-auto">
           {kinds.length > 0 ? (
             <div className="grid grid-cols-4 gap-2 landscape:grid-cols-2">
               {kinds.map((kind) => {
@@ -323,6 +331,7 @@ export function MizuPlayScreen({ user, level, onExit, onNext }: Props) {
             par={1}
             note={earned === 3 ? '1かいめで ながせた！ よく かんがえたね' : `${tries}かいめで せいこう！ 1かいめで できると ほし3つ`}
             coins={{ gained: coinsGained, total: coinTotal }}
+            finale={finale}
             hasNext={!!nextLevel}
             onNext={() => nextLevel && onNext(nextLevel.id)}
             onRetry={resetBoard}

@@ -4,6 +4,7 @@ import { CharacterIcon, characterMeta } from '../components/Character';
 import { LevelGrid } from '../components/LevelGrid';
 import { StarTotal } from '../components/StarRating';
 import { IconButton } from '../components/ui/BigButton';
+import { AccountBadge } from '../components/ui/AccountBadge';
 import { SoundToggle } from '../components/ui/SoundToggle';
 import { isLevelUnlocked, LEVELS, stageNumber, TOTAL_STARS, WORLD2_FIRST_ID, WORLD2_LEVELS, WORLD2_VISIBLE } from '../game/levels';
 import { totalStars, useProgress, type CharacterId, type Profile } from '../store/progress';
@@ -32,7 +33,7 @@ export function MapScreen({ user, character, world: requested, onWorldChange, on
 
   return (
     <div className="flex h-full flex-col gap-3 p-3" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }}>
-      <header className="flex items-center gap-3">
+      <header className="flex items-center gap-2 sm:gap-3">
         <IconButton
           label="キャラクターを かえる"
           onClick={() => {
@@ -42,8 +43,8 @@ export function MapScreen({ user, character, world: requested, onWorldChange, on
         >
           <ArrowLeft className="size-7" />
         </IconButton>
-        <div className="flex min-w-0 flex-1 items-center gap-3 rounded-2xl bg-white/80 px-4 py-2 shadow-md">
-          <CharacterIcon id={character} className="size-12 shrink-0" />
+        <div className="flex min-w-0 flex-1 items-center gap-2 rounded-2xl bg-white/80 px-3 py-2 shadow-md sm:gap-3 sm:px-4">
+          <CharacterIcon id={character} className="size-12 shrink-0 max-sm:hidden" />
           <div className="min-w-0">
             <div className="truncate text-lg leading-tight">{meta.name}の ぼうけん</div>
             <div className="text-xs text-ink/60">ステージを えらぼう</div>
@@ -55,6 +56,7 @@ export function MapScreen({ user, character, world: requested, onWorldChange, on
           )}
         </div>
         <SoundToggle />
+        <AccountBadge user={user} />
       </header>
 
       {WORLD2_VISIBLE && (

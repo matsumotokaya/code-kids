@@ -21,7 +21,7 @@ interface RhythmProgressState {
 export const useRhythmProgress = create<RhythmProgressState>()(
   persist(
     (set) => ({
-      users: { seigen: {}, amane: {}, miku: {}, kaya: {} },
+      users: { seigen: {}, amane: {}, miku: {}, kaya: {}, guest: {} },
       free: {},
       recordResult: (user, levelId, stars, tries) =>
         set((s) => {

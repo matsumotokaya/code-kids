@@ -11,7 +11,7 @@ interface JumpProgressState {
 export const useJumpProgress = create<JumpProgressState>()(
   persist(
     (set) => ({
-      users: { seigen: {}, amane: {}, miku: {}, kaya: {} },
+      users: { seigen: {}, amane: {}, miku: {}, kaya: {}, guest: {} },
       recordResult: (user, levelId, stars, cards) =>
         set((s) => {
           const profile = s.users[user] ?? {};

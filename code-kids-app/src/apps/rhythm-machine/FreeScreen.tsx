@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { sfx } from '../../audio/sfx';
 import { BigButton, IconButton } from '../../components/ui/BigButton';
+import { AccountBadge } from '../../components/ui/AccountBadge';
 import { SoundToggle } from '../../components/ui/SoundToggle';
 import type { UserId } from '../../store/session';
 import { LoopLabel, TempoPicker } from './controls';
@@ -102,7 +103,7 @@ export function RhythmFreeScreen({ user, onExit }: Props) {
 
   return (
     <div className="flex h-full flex-col gap-3 p-3" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }} onPointerDownCapture={unlockRhythmAudio}>
-      <header className="flex items-center gap-3">
+      <header className="flex items-center gap-2 sm:gap-3">
         <IconButton label="マップに もどる" onClick={exit}>
           <Home className="size-7" />
         </IconButton>
@@ -111,6 +112,7 @@ export function RhythmFreeScreen({ user, onExit }: Props) {
           <div className="text-xs text-ink/60">タップで おとを おいて「ならす！」</div>
         </div>
         <SoundToggle />
+        <AccountBadge user={user} />
       </header>
 
       <main className="flex min-h-0 flex-1 flex-col gap-3 landscape:flex-row">

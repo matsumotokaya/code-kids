@@ -8,6 +8,7 @@ import { arrowLook, CommandCard } from '../components/CommandCard';
 import { LoopProgramStrip, type LoopRun } from '../components/LoopProgramStrip';
 import { ProgramStrip } from '../components/ProgramStrip';
 import { BigButton, IconButton } from '../components/ui/BigButton';
+import { AccountBadge } from '../components/ui/AccountBadge';
 import { SoundToggle } from '../components/ui/SoundToggle';
 import { WinDialog } from '../components/WinDialog';
 import { isLoop, isMove, keyOf, makeCard, parseProgram, programIssue, rateStars, simulate, strayEnds, type ProgramIssue } from '../game/engine';
@@ -71,6 +72,8 @@ export function PlayScreen({ user, level, character, onExit, onNext }: Props) {
   const [failText, setFailText] = useState<string | null>(null);
   const [earned, setEarned] = useState<1 | 2 | 3>(1);
   const [coinsGained, setCoinsGained] = useState(0);
+  /** Set when this clear was the first clear of the last stage, i.e. the whole game is done. */
+  const [finale, setFinale] = useState(false);
   // New ideas need words: World 2 opens the hint until the stage is cleared once.
   const [showHint, setShowHint] = useState<boolean>(
     () => w2 && !useProgress.getState().users[user]?.profiles[character]?.[level.id],
@@ -287,6 +290,7 @@ export function PlayScreen({ user, level, character, onExit, onNext }: Props) {
       setEarned(stars);
       const prevStars = useProgress.getState().users[user]?.profiles[character]?.[level.id]?.stars ?? 0;
       setCoinsGained(newCoins(prevStars, stars));
+      setFinale(!nextLevel && prevStars === 0);
       recordResult(user, character, level.id, stars, program.length);
       setPhase('won');
     } else {
@@ -303,7 +307,7 @@ export function PlayScreen({ user, level, character, onExit, onNext }: Props) {
 
   return (
     <div className="flex h-full flex-col gap-3 p-3" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }}>
-      <header className="flex items-center gap-3">
+      <header className="flex items-center gap-2 sm:gap-3">
         <IconButton
           label="マップに もどる"
           onClick={() => {
@@ -343,6 +347,7 @@ export function PlayScreen({ user, level, character, onExit, onNext }: Props) {
           <Lightbulb className="size-7" />
         </IconButton>
         <SoundToggle />
+        <AccountBadge user={user} />
       </header>
 
       <main className="flex min-h-0 flex-1 flex-col gap-3 landscape:flex-row">
@@ -464,6 +469,7 @@ export function PlayScreen({ user, level, character, onExit, onNext }: Props) {
             used={program.length}
             par={level.par}
             coins={{ gained: coinsGained, total: coinTotal }}
+            finale={finale}
             hasNext={!!nextLevel}
             onNext={() => nextLevel && onNext(nextLevel.id)}
             onRetry={resetBoard}

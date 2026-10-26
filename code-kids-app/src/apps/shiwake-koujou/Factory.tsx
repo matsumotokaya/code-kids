@@ -135,6 +135,12 @@ export function Factory({ level, turns, placed, trace, clock, running, showSpots
                 style={{ transformBox: 'fill-box', transformOrigin: '50% 50%' }}
               >
                 <rect width={100} height={100} fill="transparent" />
+                {/*
+                  fill-box measures the scrolling chevrons too, clipped part included, so the turning centre
+                  would drift every frame and the whole belt would shake. This box, centred on the cell and
+                  larger than the chevrons ever reach, keeps the centre at (50, 50).
+                */}
+                <rect x={-60} y={-60} width={220} height={220} fill="none" pointerEvents="none" />
                 <BeltShape tone={tone} running={running} />
               </motion.g>
             ) : (

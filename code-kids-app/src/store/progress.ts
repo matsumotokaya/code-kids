@@ -41,14 +41,14 @@ export function migrateProgress(persisted: unknown, version: number): PersistedP
     character: old.character ?? null,
     profiles: { ...emptyProfiles(), ...(JSON.parse(JSON.stringify(old.profiles ?? {})) as Partial<Record<CharacterId, Profile>>) },
   });
-  return { soundOn: old.soundOn ?? true, users: { seigen: inherit(), amane: inherit(), miku: emptyUser(), kaya: emptyUser() } };
+  return { soundOn: old.soundOn ?? true, users: { seigen: inherit(), amane: inherit(), miku: emptyUser(), kaya: emptyUser(), guest: emptyUser() } };
 }
 
 export const useProgress = create<ProgressState>()(
   persist(
     (set) => ({
       soundOn: true,
-      users: { seigen: emptyUser(), amane: emptyUser(), miku: emptyUser(), kaya: emptyUser() },
+      users: { seigen: emptyUser(), amane: emptyUser(), miku: emptyUser(), kaya: emptyUser(), guest: emptyUser() },
       setCharacter: (user, id) =>
         set((s) => ({ users: { ...s.users, [user]: { ...(s.users[user] ?? emptyUser()), character: id } } })),
       toggleSound: () => set((s) => ({ soundOn: !s.soundOn })),

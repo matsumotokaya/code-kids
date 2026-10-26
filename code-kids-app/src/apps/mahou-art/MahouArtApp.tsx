@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useState, type ReactNode } from 'react';
 import { sfx } from '../../audio/sfx';
 import { BigButton, IconButton } from '../../components/ui/BigButton';
+import { AccountBadge } from '../../components/ui/AccountBadge';
 import { SoundToggle } from '../../components/ui/SoundToggle';
 import type { AppProps } from '../AppRunner';
 import { ArtCanvas } from './ArtCanvas';
@@ -35,7 +36,7 @@ export function MahouArtApp({ user, onQuit }: AppProps) {
         background: 'radial-gradient(ellipse at 50% 0%, #3a2f86 0%, #1b1a4d 45%, #0b0b26 100%)',
       }}
     >
-      <header className="flex items-center gap-3">
+      <header className="flex items-center gap-2 sm:gap-3">
         <IconButton
           label="ストアに もどる"
           onClick={() => {
@@ -50,6 +51,7 @@ export function MahouArtApp({ user, onQuit }: AppProps) {
           <div className="text-xs text-white/70">ゆびで なぞると もようが ふえるよ</div>
         </div>
         <SoundToggle />
+        <AccountBadge user={user} />
       </header>
 
       <main className="flex min-h-0 flex-1 flex-col gap-3 landscape:flex-row">

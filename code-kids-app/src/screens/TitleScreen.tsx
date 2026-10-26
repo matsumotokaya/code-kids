@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { sfx } from '../audio/sfx';
 import { CHARACTERS, CharacterIcon } from '../components/Character';
 import { STAR_PATH } from '../components/tiles';
+import { AccountBadge } from '../components/ui/AccountBadge';
 import { IconButton } from '../components/ui/BigButton';
 import { totalStars, useProgress, type CharacterId } from '../store/progress';
 import type { UserId } from '../store/session';
@@ -27,6 +28,9 @@ export function TitleScreen({ user, onSelect, onHome }: Props) {
         >
           <LayoutGrid className="size-7" />
         </IconButton>
+      </div>
+      <div className="absolute right-3" style={{ top: 'max(0.75rem, env(safe-area-inset-top))' }}>
+        <AccountBadge user={user} />
       </div>
       <motion.div initial={{ y: -40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 220, damping: 18 }} className="text-center">
         <h1 className="text-outline text-6xl font-black tracking-wide text-white sm:text-7xl">ほしあつめ</h1>

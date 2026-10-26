@@ -135,6 +135,32 @@ export const sfx = {
     tone({ freq: 988, dur: 0.09, type: 'square', vol: 0.04 });
     tone({ freq: 1319, dur: 0.32, type: 'square', vol: 0.04, at: 0.08 });
   },
+  /** One click of a counter rolling up; the pitch climbs as `progress` goes from 0 to 1. */
+  coinTick(progress: number): void {
+    tone({ freq: 1400 + progress * 900, dur: 0.035, type: 'square', vol: 0.022 });
+  },
+  /** The "ching!" when a coin counter lands: the pickup, a sparkling run on top and a shimmer. */
+  jackpot(): void {
+    tone({ freq: 988, dur: 0.09, type: 'square', vol: 0.045 });
+    tone({ freq: 1319, dur: 0.5, type: 'square', vol: 0.045, at: 0.08 });
+    [1568, 2093, 2637, 3136].forEach((f, i) => tone({ freq: f, dur: 0.4, type: 'sine', vol: 0.035, at: 0.14 + i * 0.05 }));
+    noise(0.6, 0.025, 9000, 3000);
+  },
+  /** A firework rocket whistling up. */
+  launch(): void {
+    tone({ freq: 500, to: 1500, dur: 0.6, type: 'sine', vol: 0.022 });
+  },
+  /** A firework bursting: a low thump under a rush of noise. */
+  boom(): void {
+    tone({ freq: 130, to: 40, dur: 0.5, type: 'sine', vol: 0.12 });
+    noise(0.7, 0.08, 2500, 120);
+  },
+  /** The 「ゲームクリア！」 fanfare: a quick climb, then a held chord with sparkles on top. */
+  fanfare(): void {
+    [523, 659, 784, 1046].forEach((f, i) => tone({ freq: f, dur: 0.16, type: 'square', vol: 0.035, at: i * 0.11 }));
+    [523, 659, 784, 1046].forEach((f) => tone({ freq: f, dur: 1.4, type: 'triangle', vol: 0.05, at: 0.48 }));
+    [1568, 2093, 2637].forEach((f, i) => tone({ freq: f, dur: 0.6, type: 'sine', vol: 0.025, at: 0.55 + i * 0.09 }));
+  },
   unlock(): void {
     [392, 523, 659].forEach((f, i) => tone({ freq: f, dur: 0.2, type: 'sine', vol: 0.07, at: i * 0.08 }));
   },

@@ -13,6 +13,8 @@ describe('userForPassword', () => {
 
   it('rejects anything else', () => {
     expect(userForPassword('')).toBeNull();
+    expect(userForPassword('ゲスト')).toBeNull();
+    expect(userForPassword('GUEST')).toBeNull();
     expect(userForPassword('SEIGE')).toBeNull();
     expect(userForPassword('AMANE1')).toBeNull();
   });

@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { sfx } from '../../audio/sfx';
 import { BigButton, IconButton } from '../../components/ui/BigButton';
+import { AccountBadge } from '../../components/ui/AccountBadge';
 import { SoundToggle } from '../../components/ui/SoundToggle';
 import { WinDialog } from '../../components/WinDialog';
 import { newCoins } from '../../store/coins';
@@ -61,6 +62,8 @@ export function RhythmPlayScreen({ user, level, onExit, onNext }: Props) {
   const [showHint, setShowHint] = useState(firstVisit);
   const [earned, setEarned] = useState<1 | 2 | 3>(1);
   const [coinsGained, setCoinsGained] = useState(0);
+  /** Set when this clear was the first clear of the last stage, i.e. the whole game is done. */
+  const [finale, setFinale] = useState(false);
 
   const played = playedPattern(level, edited, loopOn);
   // The sequencer reads these on every step, so edits and tempo changes are heard while it loops.
@@ -152,6 +155,7 @@ export function RhythmPlayScreen({ user, level, onExit, onNext }: Props) {
       const prevStars = useRhythmProgress.getState().users[user]?.[level.id]?.stars ?? 0;
       setEarned(stars);
       setCoinsGained(newCoins(prevStars, stars));
+      setFinale(!nextLevel && prevStars === 0);
       recordResult(user, level.id, stars, attempt);
       sfx.win();
       setPhase('won');
@@ -192,7 +196,7 @@ export function RhythmPlayScreen({ user, level, onExit, onNext }: Props) {
 
   return (
     <div className="flex h-full flex-col gap-3 p-3" style={{ paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }} onPointerDownCapture={unlockRhythmAudio}>
-      <header className="flex items-center gap-3">
+      <header className="flex items-center gap-2 sm:gap-3">
         <IconButton label="マップに もどる" onClick={exit}>
           <Home className="size-7" />
         </IconButton>
@@ -211,6 +215,7 @@ export function RhythmPlayScreen({ user, level, onExit, onNext }: Props) {
           <Lightbulb className="size-7" />
         </IconButton>
         <SoundToggle />
+        <AccountBadge user={user} />
       </header>
 
       <main className="flex min-h-0 flex-1 flex-col gap-3 landscape:flex-row">
@@ -317,6 +322,7 @@ export function RhythmPlayScreen({ user, level, onExit, onNext }: Props) {
             par={1}
             note={earned === 3 ? '1かいめで ぴったり！ よく きいたね' : `${tries}かいめで ぴったり！ 1かいめで できると ほし3つ`}
             coins={{ gained: coinsGained, total: coinTotal }}
+            finale={finale}
             hasNext={!!nextLevel}
             onNext={() => nextLevel && onNext(nextLevel.id)}
             onRetry={reset}

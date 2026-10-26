@@ -12,7 +12,7 @@ interface ShiwakeProgressState {
 export const useShiwakeProgress = create<ShiwakeProgressState>()(
   persist(
     (set) => ({
-      users: { seigen: {}, amane: {}, miku: {}, kaya: {} },
+      users: { seigen: {}, amane: {}, miku: {}, kaya: {}, guest: {} },
       recordResult: (user, levelId, stars, tries) =>
         set((s) => {
           const profile = s.users[user] ?? {};
